@@ -341,6 +341,75 @@
     tryPhoto('assets/drones/agrifly.jpg', 'Agrifly, the 10-inch agricultural drone', function (img) { art.replaceWith(img); });
   })();
 
+  /* ── Contact: isometric landing pad. The quad flies the approach line, touches down on the H and spools down. ── */
+  (function () {
+    var art = $('lp-art'), fig = art && art.closest('.lp-pad');
+    if (!art) return;
+    var SVGNS = 'http://www.w3.org/2000/svg';
+    var s = 0.58, R = 118, DECK = 6, BODY = 7;           // quad scale (smaller than the deck, like a real helipad); deck radius and thickness; body centre height
+    var U0 = -30, V0 = 80, H0 = 150;                     // where the approach starts: behind-right of the pad, 150 up
+    function pt(p) { return f(p[0]) + ' ' + f(p[1]); }
+
+    // deck: a low disc with its rings, an H painted on top and edge lights
+    var g = '<g class="qa">' + cyl(0, 0, R, 0, DECK).replace('class="side"', 'class="lp-deck-side"').replace('class="top"', 'class="lp-deck"');
+    g += flatEllipse(0, 0, DECK, 104, 'lp-ring') + flatEllipse(0, 0, DECK, 82, 'pad-inner');
+    // H wider than the quad's propeller span (about ±53), so the bars stay visible once it has landed
+    [[-44, -56, 44, -42], [-44, 42, 44, 56], [-6, -42, 6, 42]].forEach(function (b) {   // [u0, v0, u1, v1]
+      g += poly([P(b[0], b[1], DECK), P(b[0], b[3], DECK), P(b[2], b[3], DECK), P(b[2], b[1], DECK)], 'lp-h');
+    });
+    for (var i = 0; i < 8; i++) {
+      var a = i * Math.PI / 4 + Math.PI / 8;
+      g += flatEllipse(Math.cos(a) * 112, Math.sin(a) * 112, DECK, 3.2, 'lp-light');
+    }
+    // approach line: a straight glide slope from the start point to the body of the landed quad
+    g += '<path class="lp-path" d="M' + pt(P(U0, V0, DECK + H0 + BODY)) + 'L' + pt(P(0, 0, DECK + BODY)) + '"/>';
+    g += '<ellipse class="shadow" id="lp-shadow"/>';
+    var Q = quad(s, false);
+    g += '<g id="lp-drone">' + Q.frame + Q.motors + Q.receiver + Q.stack + Q.camera + Q.props + '</g></g>';
+    art.innerHTML = g;
+
+    // frame: crop to the deck; the approach line and the incoming quad draw above it (the svg has overflow: visible),
+    // so the figure doesn't reserve empty sky and the layout stays compact on narrow screens
+    var top = -R * KY - 22, right = P(U0, V0, 0)[0] + 112;
+    var left = -R * KX - 8, bottom = R * KY + DECK + 8;
+    art.setAttribute('viewBox', [left, top, right - left, bottom - top].map(f).join(' '));
+
+    var drone = $('lp-drone'), shadow = $('lp-shadow');
+    var set = spinSet(art.firstChild, Q.blades);
+    function place(t) {                                   // t: 0 = start of approach, 1 = on the pad
+      var u = U0 * (1 - t), v = V0 * (1 - t), h = H0 * (1 - t);
+      var d = P(u, v, DECK + h), c = P(u, v, DECK), k = 1 - 0.45 * h / H0;
+      drone.setAttribute('transform', 'translate(' + pt(d) + ')');
+      shadow.setAttribute('cx', f(c[0])); shadow.setAttribute('cy', f(c[1]));
+      shadow.setAttribute('rx', f(44 * s * KX * k)); shadow.setAttribute('ry', f(44 * s * KY * k));
+      shadow.style.opacity = f(0.09 * (0.25 + 0.75 * t));
+    }
+
+    var landed = false;
+    function land() {
+      var start = null, DUR = 2200;
+      setSpin(set, true);
+      requestAnimationFrame(function step(now) {
+        if (start === null) start = now;
+        var x = Math.min(1, (now - start) / DUR);
+        place(1 - Math.pow(1 - x, 3));                 // ease out: a long approach, a gentle flare onto the pad
+        if (x < 1) requestAnimationFrame(step);
+        else { landed = true; setTimeout(function () { if (!fig.matches(':hover')) setSpin(set, false); }, 450); }
+      });
+    }
+    if (reduceMotion || !('IntersectionObserver' in window)) { place(1); landed = true; }
+    else {
+      place(0);
+      var io = new IntersectionObserver(function (en) {
+        if (en[0].isIntersecting) { io.disconnect(); land(); }
+      }, { threshold: 0.45 });
+      io.observe(fig);
+    }
+    // once it has landed, hovering the pad spins the props up again
+    fig.addEventListener('mouseenter', function () { if (landed) setSpin(set, true); });
+    fig.addEventListener('mouseleave', function () { if (landed) setSpin(set, false); });
+  })();
+
   /* ── Reveal on scroll ── */
   var reveals = document.querySelectorAll('.reveal');
   if ('IntersectionObserver' in window && !reduceMotion) {
