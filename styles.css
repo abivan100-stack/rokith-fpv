@@ -7,7 +7,9 @@
   --ink: #15171a;
   --muted: #5a5f66;
   --line: #d4cfc2;
-  --grid: rgba(21, 23, 26, .05);
+  --grid-minor: rgba(21, 23, 26, .035);   /* hero drafting grid */
+  --grid-major: rgba(21, 23, 26, .07);
+  --grid-step: 32px;                       /* minor cell; major every 5 */
   --accent: #f04a00;
   --accent-ink: #b83800;      /* accent that passes contrast as small text */
   --on-accent: #fff;
@@ -25,7 +27,8 @@
   --ink: #ecebe6;
   --muted: #9aa0a6;
   --line: #2a2e33;
-  --grid: rgba(236, 235, 230, .045);
+  --grid-minor: rgba(236, 235, 230, .03);
+  --grid-major: rgba(236, 235, 230, .06);
   --accent: #ff6a1f;
   --accent-ink: #ff8a4a;
   --on-accent: #14100c;
@@ -106,12 +109,24 @@ a { color: inherit; }
   min-height: 100svh;
   padding: 120px var(--gutter) 72px calc(var(--gutter) + var(--rail));
   display: flex; align-items: center;
-  background-image:
-    linear-gradient(var(--grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: 40px 40px;
   border-bottom: 1px solid var(--line);
   overflow: hidden;
+}
+.hero::before {
+  /* Drafting grid on a pseudo-element so the mask fades only the grid, not the content.
+     A major line runs along the left ink edge of ROKITH: content edge (--gutter + --rail)
+     plus the R's side bearing (~.045em of the h1 size, which is repeated here; keep in sync with .hero h1). */
+  --major: calc(var(--grid-step) * 5);
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
+    linear-gradient(var(--grid-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px),
+    linear-gradient(var(--grid-minor) 1px, transparent 1px);
+  background-size: var(--major) var(--major), var(--major) var(--major), var(--grid-step) var(--grid-step), var(--grid-step) var(--grid-step);
+  background-position: calc(var(--gutter) + var(--rail) + clamp(64px, 13vw, 176px) * .045) 0;
+  -webkit-mask-image: radial-gradient(ellipse 70% 55% at 30% 45%, #000 30%, transparent 100%);
+          mask-image: radial-gradient(ellipse 70% 55% at 30% 45%, #000 30%, transparent 100%);
 }
 #sky { position: absolute; inset: 0; width: 100%; height: 100%; }
 .hero-inner { position: relative; max-width: 880px; }
