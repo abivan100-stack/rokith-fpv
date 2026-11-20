@@ -337,6 +337,33 @@
     reveals.forEach(function (el) { el.classList.add('in'); });
   }
 
+  /* ── Landing: copy the email address. Without the Clipboard API, select it (and try the old copy command). ── */
+  (function () {
+    var btn = $('copy-mail'), mail = $('lp-mail'), status = $('copy-status'), timer = 0;
+    function show(label, msg) {
+      btn.textContent = label;
+      btn.classList.toggle('done', label !== 'Copy');
+      status.textContent = msg;
+      clearTimeout(timer);
+      timer = setTimeout(function () { btn.textContent = 'Copy'; btn.classList.remove('done'); status.textContent = ''; }, 2000);
+    }
+    function fallback() {
+      var r = document.createRange(), sel = getSelection();
+      r.selectNodeContents(mail);
+      sel.removeAllRanges();
+      sel.addRange(r);
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) {}
+      if (ok) show('Copied ✓', 'Email address copied');
+      else status.textContent = 'Email address selected. Press Ctrl+C to copy.';
+    }
+    btn.addEventListener('click', function () {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(btn.dataset.copy).then(function () { show('Copied ✓', 'Email address copied'); }, fallback);
+      } else fallback();
+    });
+  })();
+
   /* ── Flight rail + active nav ── */
   var sections = Array.prototype.slice.call(document.querySelectorAll('[data-wp]'));
   var rail = document.querySelector('.rail'), marker = $('rail-marker'), label = $('rail-label');
