@@ -166,23 +166,60 @@
         <h2>Drones that do a job.</h2>
       </header>
 
-      <article class="project feature reveal">
-        <div class="project-head">
-          <p class="mono-label">Precision agriculture · Solo project</p>
-          <h3>Agrifly</h3>
-          <p class="award"><span class="medal silver">Silver</span> Robowunder International Robotics Championship, Malaysia, 2026</p>
-        </div>
-        <div class="project-body">
-          <p>Agrifly is an AI-powered, IoT-integrated agricultural drone system designed for precision farming and smart crop monitoring.</p>
-          <p>It uses multispectral imaging, NDVI analysis and environmental sensors to assess crop health and detect plant stress. By combining AI with real-time data analytics, Agrifly helps farmers improve productivity, optimise resources and farm more sustainably.</p>
-          <p class="mono-label">Hardware &amp; stack</p>
-          <ul class="chips">
-            <li>10-inch spraying &amp; monitoring airframe</li><li>ESP32</li><li>MQ-135 gas sensor</li><li>MPU6050 IMU</li><li>BME280 temp / humidity / pressure</li><li>BH1750 light sensor</li><li>Soil-moisture sensor</li><li>NEO-6M GPS</li><li>Multispectral imaging</li><li>NDVI analysis</li><li>IoT cloud telemetry</li><li>Live web dashboard</li>
-          </ul>
-          <div class="project-foot">
-            <p class="funding">US$5,000 investment secured · US$1,500 prize</p>
-            <a class="btn primary" href="https://agrifly-live.vercel.app/" target="_blank" rel="noopener">Open the live dashboard ↗</a>
+      <!-- Agrifly mission sheet: proof and drawing on top, how the system fits together below. -->
+      <article class="project feature reveal" id="agrifly">
+        <div class="mission-top">
+          <div class="mission-head">
+            <p class="mono-label">Precision agriculture · Solo project</p>
+            <h3>Agrifly</h3>
+            <p class="mission-lead">An AI-powered, IoT-integrated agricultural drone system for precision farming and smart crop monitoring. It uses multispectral imaging, NDVI analysis and environmental sensors to assess crop health and detect plant stress.</p>
           </div>
+          <figure class="mission-art">
+            <svg id="agrifly-art" role="img" aria-label="Drawing of the Agrifly 10-inch agricultural drone"></svg>
+            <figcaption class="mono-label">10-inch spraying &amp; monitoring airframe</figcaption>
+          </figure>
+          <dl class="mission-proof">
+            <div class="mp-medal"><dt>Robowunder International Robotics Championship, Malaysia, 2026</dt><dd>Silver</dd></div>
+            <div><dt>Investment secured</dt><dd>US$5,000</dd></div>
+            <div><dt>Prize</dt><dd>US$1,500</dd></div>
+          </dl>
+          <a class="btn primary mission-cta" href="https://agrifly-live.vercel.app/" target="_blank" rel="noopener">Open the live dashboard ↗<span class="sr-only"> (opens in new tab)</span></a>
+        </div>
+        <div class="mission-system">
+          <p class="mono-label">How it works</p>
+          <ul class="system-groups">
+            <li>
+              <h4>Sensors</h4>
+              <ul>
+                <li>Multispectral imaging</li>
+                <li>MQ-135 <span>· gas</span></li>
+                <li>BME280 <span>· temp / humidity / pressure</span></li>
+                <li>BH1750 <span>· light</span></li>
+                <li>Soil-moisture sensor</li>
+                <li>NEO-6M <span>· GPS</span></li>
+                <li>MPU6050 <span>· IMU</span></li>
+              </ul>
+            </li>
+            <li>
+              <h4>Controller &amp; analysis</h4>
+              <ul>
+                <li>ESP32</li>
+                <li>NDVI analysis</li>
+              </ul>
+            </li>
+            <li>
+              <h4>Connectivity</h4>
+              <ul>
+                <li>IoT cloud telemetry</li>
+              </ul>
+            </li>
+            <li>
+              <h4>Dashboard</h4>
+              <ul>
+                <li><a href="https://agrifly-live.vercel.app/" target="_blank" rel="noopener">Live web dashboard<span class="sr-only"> (opens in new tab)</span></a></li>
+              </ul>
+            </li>
+          </ul>
         </div>
       </article>
 

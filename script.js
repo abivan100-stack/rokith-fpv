@@ -324,6 +324,25 @@
     edges();
   })();
 
+  /* ── Projects: the Agrifly mission sheet draws the same 10-inch aircraft as the hangar ── */
+  (function () {
+    var card = $('agrifly'), art = $('agrifly-art');
+    if (!card || !art) return;
+    var s = 2, Q = quad(s, false);
+    art.setAttribute('viewBox', [-142 * s, -124 * s, 284 * s, 208 * s].map(f).join(' '));
+    art.innerHTML = '<g class="qa">' +
+      flatEllipse(0, 0, 0, 112 * s, 'pad') + flatEllipse(0, 0, 0, 84 * s, 'pad-inner') + flatEllipse(0, 0, 0, 48 * s, 'shadow') +
+      '<g class="drone"><g transform="translate(0 ' + f(-20 * s) + ')">' +
+        Q.frame + Q.motors + Q.receiver + Q.stack + Q.camera + Q.props +
+      '</g></g></g>';
+    var set = spinSet(art.firstChild, Q.blades);
+    card.addEventListener('mouseenter', function () { setSpin(set, true); });
+    card.addEventListener('mouseleave', function () { setSpin(set, card.contains(document.activeElement)); });
+    card.addEventListener('focusin', function () { setSpin(set, true); });
+    card.addEventListener('focusout', function (e) { if (!card.contains(e.relatedTarget)) setSpin(set, card.matches(':hover')); });
+    tryPhoto('assets/drones/agrifly.jpg', 'Agrifly, the 10-inch agricultural drone', function (img) { art.replaceWith(img); });
+  })();
+
   /* ── Reveal on scroll ── */
   var reveals = document.querySelectorAll('.reveal');
   if ('IntersectionObserver' in window && !reduceMotion) {
