@@ -321,20 +321,81 @@ a { color: inherit; }
 /* ── Projects ── */
 .project { border: 1px solid var(--line); background: var(--surface); padding: clamp(22px, 3vw, 36px); display: flex; flex-direction: column; gap: 14px; }
 .project h3 { font: 800 clamp(30px, 3.6vw, 46px)/1 var(--display); font-stretch: 112%; letter-spacing: -.02em; }
-.project p:not(.mono-label):not(.award):not(.funding):not(.role) { color: var(--muted); max-width: 62ch; }
+.project p:not(.mono-label):not(.role) { color: var(--muted); max-width: 62ch; }
 .project .chips { margin-top: auto; padding-top: 6px; }
 .project .chips li { background: var(--bg); }
-.project.feature { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.3fr); gap: clamp(24px, 4vw, 56px); border-color: var(--ink); }
-.project.feature h3 { font-size: clamp(40px, 5vw, 76px); text-transform: uppercase; margin: 10px 0 18px; }
-.project-body { display: flex; flex-direction: column; gap: 14px; }
-.project-body .mono-label { margin-top: 8px; }
-.project-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-top: 12px; padding-top: 18px; border-top: 1px solid var(--line); }
-.funding { font: 500 13px var(--mono); letter-spacing: .04em; }
-.award { font-weight: 500; line-height: 1.45; }
 .role { font: 500 13px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent-ink); }
 .project-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-top: 24px; }
 @media (max-width: 860px) {
-  .project.feature, .project-row { grid-template-columns: 1fr; }
+  .project-row { grid-template-columns: 1fr; }
+}
+
+/* Agrifly mission sheet: story, proof and drawing on top; the system, grouped by role, below */
+.project.feature { gap: 0; border-color: var(--ink); }
+.project.feature h3 { font-size: clamp(40px, 5vw, 76px); text-transform: uppercase; margin: 10px 0 18px; }
+.project.feature .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.mission-top {
+  display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+  grid-template-areas: "head art" "proof art" "cta art";
+  grid-template-rows: auto auto 1fr;
+  column-gap: clamp(24px, 4vw, 56px); align-items: start;
+}
+.mission-head { grid-area: head; }
+.project.feature p.mission-lead { color: var(--ink); font-size: 18px; line-height: 1.55; max-width: 54ch; }
+.mission-art { grid-area: art; align-self: center; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.mission-art svg { display: block; width: 100%; max-width: 440px; aspect-ratio: 284 / 208; overflow: visible; }
+.mission-art img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border: 1px solid var(--line); }
+.mission-art figcaption { text-align: center; }
+html:not(.js) .mission-art svg { display: none; }
+.mission-art .drone { transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
+.project.feature:is(:hover, :focus-within) .mission-art .drone { transform: translateY(-14px); }
+
+.mission-proof { grid-area: proof; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); margin-top: 32px; border-top: 1px solid var(--ink); }
+.mission-proof > div { display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 6px; padding: 14px 20px 0; }
+.mission-proof > div:first-child { padding-left: 0; }
+.mission-proof > div + div { border-left: 1px solid var(--line); }
+/* the medal gets its own row; the two amounts share the next */
+.mission-proof > .mp-medal { grid-column: 1 / -1; flex-direction: row-reverse; align-items: center; gap: 8px 22px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.mp-medal dt { max-width: 34ch; }
+.mission-proof > div:nth-child(2) { padding-left: 0; border-left: 0; }
+.mission-proof dt { font: 500 11px/1.5 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.mission-proof dd { font: 700 clamp(24px, 2.6vw, 36px)/1.1 var(--display); font-stretch: 112%; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mp-medal dd { display: flex; align-items: center; gap: 10px; }
+.mp-medal dd::before { content: ""; flex: none; width: .4em; height: .4em; border-radius: 50%; background: var(--silver); box-shadow: 0 0 0 3px color-mix(in srgb, var(--silver) 25%, transparent); }
+.mission-cta { grid-area: cta; justify-self: start; margin-top: 28px; }
+
+.mission-system { margin-top: clamp(28px, 4vw, 44px); padding-top: 22px; border-top: 1px solid var(--line); }
+.system-groups { display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)); margin-top: 18px; }
+.system-groups > li { padding: 0 24px; border-left: 1px solid var(--line); }
+.system-groups > li:first-child { padding-left: 0; border-left: 0; }
+.system-groups > li:last-child { padding-right: 0; }
+.system-groups h4 { font: 500 12px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--accent-ink); padding-bottom: 10px; margin-bottom: 6px; border-bottom: 1px solid var(--ink); }
+.system-groups li li { padding: 6px 0; font-size: 15px; font-weight: 500; line-height: 1.45; border-bottom: 1px dotted var(--line); }
+.system-groups li li:last-child { border-bottom: 0; }
+.system-groups li li span { color: var(--muted); font-weight: 400; }
+.system-groups a { text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 4px; transition: color .15s, text-decoration-color .15s; }
+.system-groups a::after { content: "\00a0\2197" / ""; color: var(--accent-ink); }
+.system-groups a:hover { color: var(--accent-ink); text-decoration-color: currentColor; }
+
+@media (max-width: 1099px) {
+  .mission-art svg { max-width: 280px; }
+  .system-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 28px; }
+  .system-groups > li:nth-child(odd) { padding-left: 0; padding-right: 24px; border-left: 0; }
+  .system-groups > li:nth-child(even) { padding-right: 0; }
+}
+@media (max-width: 859px) {
+  .mission-top { grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "art" "proof" "cta"; grid-template-rows: none; }
+  .mission-art { margin-top: 28px; }
+  .mission-art svg { max-width: 260px; }
+  .mission-cta { justify-self: stretch; text-align: center; }
+}
+@media (max-width: 379px) {
+  .mission-proof { grid-template-columns: minmax(0, 1fr); }
+  .mission-proof > div:nth-child(3) { padding-left: 0; border-left: 0; margin-top: 14px; border-top: 1px solid var(--line); }
+}
+@media (max-width: 599px) {
+  .system-groups { grid-template-columns: minmax(0, 1fr); row-gap: 24px; }
+  .system-groups > li, .system-groups > li:nth-child(odd), .system-groups > li:nth-child(even) { padding: 0; border-left: 0; }
 }
 
 .medal {
@@ -592,6 +653,8 @@ a { color: inherit; }
   html { scroll-behavior: auto; }
   .js .reveal { opacity: 1; transform: none; transition: none; }
   .qa .disc, .bay .drone, .build-steps li, .build-steps p { transition: none; }
+  .mission-art .drone, .system-groups a { transition: none; }
+  .project.feature:is(:hover, :focus-within) .mission-art .drone { transform: none; }
   .pipe-track::before { transform: none; transition: none; }
   .pt-node i, .stage::before, .stage-skills li::before, .proof a { transition: none; }
   .pt-node i { background: var(--accent); border-color: var(--accent); }
