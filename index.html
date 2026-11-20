@@ -131,16 +131,16 @@
         </div>
       </div>
 
-      <!-- Part 2: the hangar row. Each aircraft hovers over its pad, drawn to scale by propeller size. -->
+      <!-- Part 2: the hangar. A to-scale lineup of every aircraft on one ground line, and a spec sheet keyed to it. -->
       <div class="hangar-head">
         <h3>The hangar</h3>
         <p>Drawn to scale by propeller size. Hover over or tap an aircraft to spin it up.</p>
-        <div class="hangar-nav">
-          <button type="button" id="hangar-prev" aria-label="Previous aircraft"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
-          <button type="button" id="hangar-next" aria-label="Next aircraft"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
-        </div>
       </div>
-      <ol class="hangar-row" id="hangar-row" aria-label="Aircraft"></ol>
+      <div class="hangar" id="hangar">
+        <ol class="lineup" id="lineup" aria-label="Aircraft drawn to scale"></ol>
+        <div class="scale-bar" aria-hidden="true"><span>0</span><span class="sb-mid">5</span><span>10 in</span></div>
+        <ol class="spec-sheet" id="spec-sheet" aria-label="Aircraft specifications"></ol>
+      </div>
 
       <!-- Part 3: the kit, as a pre-flight checklist. -->
       <div class="checklist reveal">

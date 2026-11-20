@@ -197,8 +197,8 @@ a { color: inherit; }
 }
 
 /* ── Hangar ──
-   Three movements: the build (scroll assembles an exploded quad), the hangar row
-   (all five aircraft hovering over their pads, to scale), and the pre-flight checklist. */
+   Three movements: the build (scroll assembles an exploded quad), the hangar
+   (all five aircraft side by side on one ground line, to scale, with a spec sheet), and the pre-flight checklist. */
 
 /* Shared isometric line-art */
 .qa * { vector-effect: non-scaling-stroke; }
@@ -259,48 +259,71 @@ a { color: inherit; }
   .build-steps li.on p { max-height: none; }
 }
 
-/* 2. The hangar row */
-.hangar-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 8px 24px; margin-top: clamp(64px, 9vw, 120px); }
+/* 2. The hangar: a to-scale lineup on one ground line, and a spec sheet keyed to it by numbered callouts */
+.hangar-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 8px 32px; margin-top: clamp(64px, 9vw, 120px); }
 .hangar-head h3 { font: 700 clamp(26px, 3vw, 36px)/1.1 var(--display); font-stretch: 108%; letter-spacing: -.01em; }
-.hangar-head p { grid-column: 1; color: var(--muted); }
-.hangar-nav { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: 8px; }
-.hangar-nav button { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid var(--ink); border-radius: 50%; background: var(--bg); color: var(--ink); cursor: pointer; transition: background-color .15s, color .15s; }
-.hangar-nav button:hover:not(:disabled) { background: var(--ink); color: var(--bg); }
-.hangar-nav button:disabled { opacity: .3; cursor: default; }
-.hangar-nav svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.hangar-head p { color: var(--muted); }
 
-.hangar-row {
-  --k: 1;
-  position: relative; /* bays measure offsetLeft against the row */
-  display: flex; margin-top: 24px;
-  overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth;
+/* The lineup: column widths are set from the fleet in script.js (fr = propeller inches), no gaps, so it stays to scale. */
+.lineup { display: grid; align-items: end; margin-top: clamp(8px, 1.5vw, 20px); }
+.craft { min-width: 0; }
+.craft svg { display: block; width: 100%; height: auto; overflow: visible; border-bottom: 2px solid var(--ink); }
+.craft .drone { transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
+.craft.is-on .drone { transform: translateY(var(--lift)); }
+.craft-tag { display: flex; justify-content: center; align-items: center; gap: 8px; padding-top: 12px; font: 500 12px/1 var(--mono); letter-spacing: .04em; color: var(--muted); }
+.callout {
+  display: inline-grid; place-items: center; flex: none; width: 22px; height: 22px;
+  border: 1px solid var(--line); border-radius: 50%; background: var(--bg);
+  font: 500 11px/1 var(--mono); letter-spacing: 0; color: var(--ink);
+  transition: background-color .2s, border-color .2s, color .2s;
+}
+.is-on .callout { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+/* Scale bar: 10 inches of propeller at the lineup's scale (--ten-in is set in script.js). */
+.scale-bar { position: relative; width: var(--ten-in); height: 28px; margin-top: 14px; font: 500 11px/1 var(--mono); letter-spacing: .04em; color: var(--muted); }
+.scale-bar::before {
+  content: ""; position: absolute; inset: 0 0 auto; height: 7px;
+  border: 1px solid var(--ink); border-top: 0;
+  background: linear-gradient(var(--ink), var(--ink)) 50% 0 / 1px 100% no-repeat;
+}
+.scale-bar span { position: absolute; top: 14px; left: 0; transform: translateX(-50%); white-space: nowrap; }
+.scale-bar span:first-child { transform: none; }
+.scale-bar .sb-mid { left: 50%; }
+.scale-bar span:last-child { left: 100%; transform: translateX(-.6ch); }
+
+/* The spec sheet: one card per aircraft, same order and numbers as the lineup. */
+.spec-sheet {
+  --cols: 5; --pad: clamp(14px, 1.6vw, 22px);
+  display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  container-type: inline-size; /* card names size to the card width */
+  margin-top: clamp(24px, 3vw, 36px); overflow: hidden; /* hides the outer edges of the card borders */
   border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink);
-  scrollbar-width: thin; scrollbar-color: var(--line) transparent;
 }
-.bay {
-  flex: 0 0 max(260px, calc(var(--aw) * var(--k) + 56px));
-  scroll-snap-align: start;
-  padding: 28px 28px 32px;
-  display: flex; flex-direction: column; gap: 10px;
-  outline-offset: -3px;
+.spec-card {
+  /* rows (photo, class, name, three spec lines, description) line up across the cards */
+  display: grid; grid-row: span 7; grid-template-rows: subgrid; row-gap: 0; min-width: 0;
+  padding: 22px var(--pad) 26px; margin: 0 0 -1px -1px;
+  border-left: 1px dashed var(--line); border-bottom: 1px solid var(--line);
+  transition: background-color .2s, box-shadow .2s;
 }
-.bay + .bay { border-left: 1px dashed var(--line); }
-.bay-art { height: calc(340px * var(--k)); display: flex; align-items: flex-end; justify-content: center; margin-bottom: 14px; }
-.bay-art.has-photo img { width: 100%; height: 100%; object-fit: cover; }
-.bay-art svg { width: calc(var(--aw) * var(--k)); height: auto; overflow: visible; }
-.bay .drone { transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
-.bay:hover .drone, .bay:focus-visible .drone { transform: translateY(var(--lift)); }
-.bay-class { font: 500 11px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--accent-ink); }
-.bay-name { font: 800 clamp(28px, 3vw, 38px)/1 var(--display); font-stretch: 112%; letter-spacing: -.02em; text-transform: uppercase; }
-.bay-spec { border-top: 1px solid var(--ink); }
-.bay-spec > div { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
-.bay-spec dt { font: 500 11px/1.9 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
-.bay-spec dd { font-weight: 600; text-align: right; }
-.bay-desc { font-size: 15px; color: var(--muted); max-width: 40ch; }
-@media (max-width: 700px) {
-  .hangar-row { --k: .62; }
-  .bay { padding: 22px 18px 24px; flex-basis: max(240px, calc(var(--aw) * var(--k) + 36px)); }
+.spec-card.is-on { background: var(--surface); box-shadow: inset 0 2px 0 var(--accent); }
+.spec-photo:not(:empty) { margin-bottom: 16px; }
+.spec-photo img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border: 1px solid var(--line); }
+.bay-class { display: flex; align-items: center; gap: 10px; font: 500 11px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--accent-ink); }
+.bay-name { margin: 10px 0 14px; font: 800 clamp(18px, (100cqi / var(--cols) - 2 * var(--pad)) / 8.4, 28px)/1.05 var(--display); font-stretch: 112%; letter-spacing: -.02em; text-transform: uppercase; overflow-wrap: anywhere; }
+.bay-spec { display: contents; }
+.bay-spec > div:first-child { border-top: 1px solid var(--ink); }
+.bay-spec > div { padding: 7px 0; border-bottom: 1px solid var(--line); }
+.bay-spec dt { font: 500 10.5px/1.6 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.bay-spec dd { font-size: 14px; font-weight: 600; line-height: 1.35; }
+.bay-desc { padding-top: 14px; font-size: 14.5px; line-height: 1.5; color: var(--muted); }
+
+@media (max-width: 999px) { .spec-sheet { --cols: 3; } }
+@media (max-width: 699px) {
+  .spec-sheet { --cols: 2; }
+  .craft-inch, .scale-bar .sb-mid { display: none; }
 }
+@media (max-width: 479px) { .spec-sheet { --cols: 1; } }
 
 /* 3. Pre-flight checklist */
 .checklist { margin-top: clamp(56px, 7vw, 88px); border: 1px solid var(--ink); background: var(--surface); padding: clamp(22px, 3vw, 36px); }
@@ -652,7 +675,7 @@ html:not(.js) .mission-art svg { display: none; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .js .reveal { opacity: 1; transform: none; transition: none; }
-  .qa .disc, .bay .drone, .build-steps li, .build-steps p { transition: none; }
+  .qa .disc, .craft .drone, .spec-card, .callout, .build-steps li, .build-steps p { transition: none; }
   .mission-art .drone, .system-groups a { transition: none; }
   .project.feature:is(:hover, :focus-within) .mission-art .drone { transform: none; }
   .pipe-track::before { transform: none; transition: none; }
