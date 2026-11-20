@@ -712,6 +712,37 @@ html:not(.js) .mission-art svg { display: none; }
 .brief-go { margin-top: auto; padding-top: 14px; font: 500 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
 .brief:hover .arr, .brief:focus-visible .arr { color: var(--accent-ink); transform: translateX(4px); }
 
+/* Compose panel (opened by the briefs and "Email Rokith") */
+.compose {
+  width: min(640px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow: auto;
+  padding: 0; border: 1px solid var(--ink); border-radius: 2px;
+  background: var(--surface); color: var(--ink);
+}
+.compose::backdrop { background: color-mix(in srgb, #0b0d10 55%, transparent); }
+.compose-box { display: flex; flex-direction: column; padding: clamp(20px, 4vw, 32px); }
+.compose-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding-bottom: 16px; margin-bottom: 18px; border-bottom: 1px solid var(--ink); }
+.compose-head .mono-label { color: var(--accent-ink); }
+.compose-head h3 { font: 700 clamp(24px, 3vw, 30px)/1.1 var(--display); font-stretch: 106%; margin-top: 6px; }
+.compose-x { flex: none; width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid var(--muted); border-radius: 2px; background: none; color: var(--ink); font-size: 22px; line-height: 1; cursor: pointer; }
+.compose-x:hover { border-color: var(--ink); }
+.compose-field { display: block; margin-bottom: 6px; }
+.compose-field .mono-label, .compose-send { font-size: 11px; }
+.compose-to { font: 500 15px var(--mono); margin: 4px 0 16px; overflow-wrap: anywhere; }
+.compose input, .compose textarea {
+  width: 100%; margin-bottom: 16px; padding: 10px 12px;
+  font: 400 16px/1.5 var(--display); color: var(--ink);
+  background: var(--bg); border: 1px solid var(--muted); border-radius: 2px;
+}
+.compose textarea { resize: vertical; min-height: 180px; }
+.compose input:focus-visible, .compose textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.compose-send { margin: 4px 0 10px; }
+.compose-actions { display: grid; grid-template-columns: repeat(4, auto); justify-content: start; gap: 10px; }
+.compose-actions .btn { text-align: center; cursor: pointer; font-family: var(--mono); }
+.compose-status { min-height: 1.5em; margin-top: 12px; font: 500 13px var(--mono); color: var(--accent-ink); }
+@media (max-width: 560px) {
+  .compose-actions { grid-template-columns: 1fr 1fr; }
+}
+
 /* Band 3: comms rows and the latest result */
 .comms { margin-top: 12px; border-top: 1px solid var(--ink); }
 .comms a { display: flex; align-items: baseline; gap: 12px; min-height: 48px; padding: 12px 0; border-bottom: 1px solid var(--line); text-decoration: none; }

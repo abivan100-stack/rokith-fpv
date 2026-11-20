@@ -492,7 +492,7 @@
           </dl>
           <div class="lp-actions reveal">
             <div class="cta">
-              <a class="btn primary" href="mailto:rokithkumaar742@gmail.com">Email Rokith →</a>
+              <a class="btn primary" href="mailto:rokithkumaar742@gmail.com?subject=Hello%20Rokith&amp;body=Hi%20Rokith%2C%0D%0A%0D%0A%0D%0ABest%2C%0D%0A" data-compose data-code="Direct" data-title="Email Rokith">Email Rokith →</a>
               <a class="btn" href="assets/Rokith-Kumaar-CV.pdf" download>Download CV ↓</a>
             </div>
             <p class="lp-addr">
@@ -514,15 +514,15 @@
       <div class="lp-plans">
         <div class="lp-plans-head">
           <p class="mono-label">File a flight plan</p>
-          <p class="lp-help">Pick a brief. Your email app opens with it filled in.</p>
+          <p class="lp-help">Pick a brief, edit it, then send it with Gmail, Outlook or your email app.</p>
         </div>
-        <a class="brief reveal" href="mailto:rokithkumaar742@gmail.com?subject=Internship%20opportunity%20for%20Rokith&amp;body=Hi%20Rokith%2C%0D%0A%0D%0AOrganisation%3A%0D%0ARole%20%2F%20team%3A%0D%0ADates%20and%20duration%3A%0D%0ALocation%20(on-site%20%2F%20remote)%3A%0D%0AWhat%20you'd%20work%20on%3A%0D%0A%0D%0ABest%2C%0D%0A" aria-label="Email Rokith about an internship (prefilled brief)">
+        <a class="brief reveal" data-compose data-code="FP-01" data-title="Internship" href="mailto:rokithkumaar742@gmail.com?subject=Internship%20opportunity%20for%20Rokith&amp;body=Hi%20Rokith%2C%0D%0A%0D%0AOrganisation%3A%0D%0ARole%20%2F%20team%3A%0D%0ADates%20and%20duration%3A%0D%0ALocation%20(on-site%20%2F%20remote)%3A%0D%0AWhat%20you'd%20work%20on%3A%0D%0A%0D%0ABest%2C%0D%0A" aria-label="Email Rokith about an internship (prefilled brief)">
           <span class="brief-code">FP-01</span>
           <span class="brief-title">Internship</span>
           <span class="brief-desc">For companies, labs and startups</span>
           <span class="brief-go">Open brief <span class="arr" aria-hidden="true">→</span></span>
         </a>
-        <a class="brief reveal" href="mailto:rokithkumaar742@gmail.com?subject=Question%20for%20Rokith&amp;body=Hi%20Rokith%2C%0D%0A%0D%0AWho%20I%20am%3A%0D%0AWhat%20it%20is%20about%3A%0D%0A%0D%0ABest%2C%0D%0A" aria-label="Email Rokith with another question (prefilled brief)">
+        <a class="brief reveal" data-compose data-code="FP-02" data-title="General enquiry" href="mailto:rokithkumaar742@gmail.com?subject=Question%20for%20Rokith&amp;body=Hi%20Rokith%2C%0D%0A%0D%0AWho%20I%20am%3A%0D%0AWhat%20it%20is%20about%3A%0D%0A%0D%0ABest%2C%0D%0A" aria-label="Email Rokith with another question (prefilled brief)">
           <span class="brief-code">FP-02</span>
           <span class="brief-title">General enquiry</span>
           <span class="brief-desc">Any other question for Rokith</span>
@@ -547,6 +547,35 @@
           <a class="sortie-link" href="#results">All results <span class="arr" aria-hidden="true">→</span></a>
         </div>
       </div>
+      <!-- Compose panel: mailto links do nothing on computers without a desktop mail app, so the briefs open here
+           and the visitor picks Gmail, Outlook, their email app, or copies the message. Without JS the mailto links still work. -->
+      <dialog class="compose" id="compose" aria-labelledby="compose-title">
+        <form class="compose-box" id="compose-form" novalidate>
+          <div class="compose-head">
+            <div>
+              <p class="mono-label" id="compose-code"></p>
+              <h3 id="compose-title"></h3>
+            </div>
+            <button type="button" class="compose-x" id="compose-close" aria-label="Close">×</button>
+          </div>
+          <div class="compose-field">
+            <span class="mono-label">To</span>
+            <p class="compose-to">rokithkumaar742@gmail.com</p>
+          </div>
+          <label class="compose-field" for="compose-subject"><span class="mono-label">Subject</span></label>
+          <input id="compose-subject" type="text" autocomplete="off">
+          <label class="compose-field" for="compose-body"><span class="mono-label">Message</span></label>
+          <textarea id="compose-body" rows="9"></textarea>
+          <p class="mono-label compose-send">Send it with</p>
+          <div class="compose-actions">
+            <a class="btn primary" id="send-gmail" target="_blank" rel="noopener">Gmail ↗<span class="sr-only"> (opens in new tab)</span></a>
+            <a class="btn" id="send-outlook" target="_blank" rel="noopener">Outlook ↗<span class="sr-only"> (opens in new tab)</span></a>
+            <a class="btn" id="send-app">Email app</a>
+            <button type="button" class="btn" id="send-copy">Copy message</button>
+          </div>
+          <p class="compose-status" id="compose-status" role="status" aria-live="polite"></p>
+        </form>
+      </dialog>
     </section>
   </main>
 

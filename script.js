@@ -423,6 +423,75 @@
     reveals.forEach(function (el) { el.classList.add('in'); });
   }
 
+  /* ── Landing: compose panel. mailto alone does nothing on machines without a desktop mail app, so the
+        briefs open an editable message the visitor can send through Gmail, Outlook, their app, or copy. ── */
+  (function () {
+    var dlg = $('compose');
+    if (!dlg || typeof dlg.showModal !== 'function') return;   // no <dialog> support: the mailto links keep working
+    var TO = 'rokithkumaar742@gmail.com';
+    var subj = $('compose-subject'), body = $('compose-body'), status = $('compose-status');
+    var gmail = $('send-gmail'), outlook = $('send-outlook'), app = $('send-app'), copyBtn = $('send-copy');
+    var opener = null, timer = 0;
+    var enc = encodeURIComponent;
+    function crlf(t) { return t.replace(/\r?\n/g, '\r\n'); }   // mail clients expect CRLF line breaks
+
+    function sync() {
+      var s = subj.value, b = crlf(body.value);
+      gmail.href = 'https://mail.google.com/mail/?view=cm&fs=1&to=' + enc(TO) + '&su=' + enc(s) + '&body=' + enc(b);
+      outlook.href = 'https://outlook.live.com/mail/0/deeplink/compose?to=' + enc(TO) + '&subject=' + enc(s) + '&body=' + enc(b);
+      app.href = 'mailto:' + TO + '?subject=' + enc(s) + '&body=' + enc(b);
+    }
+    function say(msg) {
+      status.textContent = msg;
+      clearTimeout(timer);
+      timer = setTimeout(function () { status.textContent = ''; }, 4000);
+    }
+    function open(link) {
+      var q = new URLSearchParams((link.getAttribute('href').split('?')[1]) || '');
+      $('compose-code').textContent = link.dataset.code || '';
+      $('compose-title').textContent = link.dataset.title || 'Email Rokith';
+      subj.value = q.get('subject') || '';
+      body.value = (q.get('body') || '').replace(/\r\n/g, '\n');
+      status.textContent = '';
+      sync();
+      opener = link;
+      dlg.showModal();
+      // put the cursor on the first blank line of the template so the visitor can start typing
+      var at = body.value.indexOf(':\n'), pos = at >= 0 ? at + 1 : body.value.indexOf('\n\n') + 2;
+      body.focus();
+      if (pos > 0) body.setSelectionRange(pos, pos);
+      body.scrollTop = 0;                                   // keep the greeting in view on short screens
+    }
+    function close() { dlg.close(); }
+
+    document.querySelectorAll('[data-compose]').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        if (e.ctrlKey || e.metaKey || e.shiftKey || e.button) return;   // let modified clicks behave normally
+        e.preventDefault();
+        open(link);
+      });
+    });
+    subj.addEventListener('input', sync);
+    body.addEventListener('input', sync);
+    $('compose-close').addEventListener('click', close);
+    $('compose-form').addEventListener('submit', function (e) { e.preventDefault(); });
+    dlg.addEventListener('click', function (e) { if (e.target === dlg) close(); });   // click on the backdrop
+    dlg.addEventListener('close', function () { if (opener) opener.focus(); });
+    [gmail, outlook].forEach(function (a) {
+      a.addEventListener('click', function () { say('Opened in a new tab. Send it from there.'); });
+    });
+    app.addEventListener('click', function () {
+      say('Opening your email app. If nothing happens, use Gmail, Outlook or Copy message.');
+    });
+    copyBtn.addEventListener('click', function () {
+      var text = 'To: ' + TO + '\nSubject: ' + subj.value + '\n\n' + body.value;
+      function done() { say('Message copied. Paste it into any email to ' + TO + '.'); }
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(done, function () { body.select(); say('Message selected. Press Ctrl+C to copy.'); });
+      } else { body.select(); say('Message selected. Press Ctrl+C to copy.'); }
+    });
+  })();
+
   /* ── Landing: copy the email address. Without the Clipboard API, select it (and try the old copy command). ── */
   (function () {
     var btn = $('copy-mail'), mail = $('lp-mail'), status = $('copy-status'), timer = 0;
