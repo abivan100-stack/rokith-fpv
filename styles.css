@@ -198,7 +198,7 @@ a { color: inherit; }
 
 /* ── Hangar ──
    Three movements: the build (scroll assembles an exploded quad), the hangar
-   (all five aircraft side by side on one ground line, to scale, with a spec sheet), and the pre-flight checklist. */
+   (all five aircraft side by side on one ground line, to scale, with a spec sheet), and the signal chain of the kit. */
 
 /* Shared isometric line-art */
 .qa * { vector-effect: non-scaling-stroke; }
@@ -325,21 +325,71 @@ a { color: inherit; }
 }
 @media (max-width: 479px) { .spec-sheet { --cols: 1; } }
 
-/* 3. Pre-flight checklist */
-.checklist { margin-top: clamp(56px, 7vw, 88px); border: 1px solid var(--ink); background: var(--surface); padding: clamp(22px, 3vw, 36px); }
-.checklist h3 { font: 700 22px/1.2 var(--display); font-stretch: 108%; margin-bottom: 18px; }
-.checklist dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; }
-.checklist dl > div { display: flex; align-items: baseline; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); }
-.checklist dl > div::before {
-  content: ""; flex: none; width: 14px; height: 14px; align-self: center;
-  border-radius: 2px;
-  background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M3 7.2l2.6 2.6L11 4.4' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% no-repeat;
+/* 3. Signal chain: the kit grouped by what it does, joined by the links between the groups.
+   Phone: a vertical chain on a left rail, ground control branching off the aircraft.
+   >= 1000px: left to right, ground control under the aircraft, a return loop underneath. */
+.kit { margin-top: clamp(64px, 9vw, 120px); padding-top: clamp(20px, 2.4vw, 28px); border-top: 1px solid var(--ink); }
+.kit-head .mono-label { color: var(--accent-ink); }
+.kit-head h3 { margin: 10px 0 6px; font: 700 clamp(26px, 3vw, 36px)/1.1 var(--display); font-stretch: 108%; letter-spacing: -.01em; }
+.kit-head > p:last-child { color: var(--muted); }
+
+.chain { --rail: 20px; display: grid; margin-top: clamp(28px, 4vw, 44px); }
+.node { position: relative; z-index: 1; min-width: 0; padding: 20px 22px; background: var(--surface); border: 1px solid var(--line); }
+.n-air { border-color: var(--ink); }
+.node-step { display: flex; align-items: center; gap: 8px; font: 500 12px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--accent-ink); }
+.node-step svg { flex: none; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+.node h4 { margin: 8px 0 10px; padding-bottom: 10px; border-bottom: 1px solid var(--line); font: 700 20px/1.25 var(--display); font-stretch: 106%; }
+.node h4 span { font: 500 13px var(--mono); letter-spacing: .04em; color: var(--muted); }
+.node ul li { padding: 3px 0; font-size: 16px; font-weight: 600; line-height: 1.4; }
+
+/* Links: real text; the lines and arrowheads are drawn by ::before / ::after. */
+.link { position: relative; display: flex; flex-direction: column; justify-content: center; min-height: 72px; padding: 14px 0 14px calc(var(--rail) + 24px); }
+.link-name { font: 500 11px/1.5 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.link-sub { font-size: 15px; font-weight: 600; line-height: 1.35; }
+.link::before { content: ""; position: absolute; left: var(--rail); top: 0; bottom: 0; width: 1px; background: var(--ink); }
+.l-control::after, .l-video::after {
+  content: ""; position: absolute; left: calc(var(--rail) - 4px); bottom: 0; width: 9px; height: 9px;
+  background: var(--ink); clip-path: polygon(0 0, 100% 0, 50% 100%);
 }
-.checklist dt { font: 500 11px/1.4 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
-.checklist dl > div > dt { display: flex; flex: 1; align-items: baseline; gap: 8px; }
-.checklist dl > div > dt::after { content: ""; flex: 1; min-width: 16px; border-bottom: 1px dotted var(--muted); transform: translateY(-3px); }
-.checklist dd { font-weight: 600; text-align: right; }
-@media (max-width: 760px) { .checklist dl { grid-template-columns: 1fr; } }
+.l-map { padding-left: calc(var(--rail) + 48px); background: linear-gradient(var(--ink), var(--ink)) var(--rail) 0 / 1px 100% no-repeat; }
+.l-map::before { left: calc(var(--rail) + 24px); background: none; border-left: 1px dashed var(--muted); }
+.l-loop { min-height: 0; padding-top: 18px; padding-bottom: 0; }
+.l-loop::before { content: "\21BA" / ""; top: 14px; bottom: auto; left: calc(var(--rail) - 9px); width: auto; background: none; font: 500 20px/1 var(--mono); color: var(--accent); }
+
+/* Tablet: two columns of items keep the stacked cards short. */
+@media (min-width: 560px) and (max-width: 999px) { .node ul { columns: 2; column-gap: 24px; } }
+
+/* Phone order: ground control branches off the aircraft, beside the main rail. */
+.n-hands { order: 1; } .l-control { order: 2; } .n-air { order: 3; } .l-map { order: 4; }
+.n-ground { order: 5; margin-left: calc(var(--rail) + 12px); }
+.n-ground::before { content: ""; position: absolute; left: -13px; top: -1px; bottom: -1px; width: 1px; background: var(--ink); }
+.l-video { order: 6; } .n-eyes { order: 7; } .l-loop { order: 8; }
+
+@media (min-width: 1000px) {
+  .chain { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr); grid-template-rows: auto 64px auto 28px; }
+  .n-hands { grid-area: 1 / 1; } .l-control { grid-area: 1 / 2; } .n-air { grid-area: 1 / 3; }
+  .l-video { grid-area: 1 / 4; } .n-eyes { grid-area: 1 / 5; }
+  .l-map { grid-area: 2 / 3; } .n-ground { grid-area: 3 / 3; margin-left: 0; }
+  .n-ground::before { content: none; }
+  .l-loop { grid-area: 2 / 1 / 5 / 6; }
+
+  /* horizontal links: label above an arrow that ends on the next node */
+  .l-control, .l-video { align-self: start; justify-content: flex-end; min-height: 0; height: 81px; padding: 0 clamp(14px, 1.6vw, 22px) 12px; text-align: center; white-space: nowrap; }
+  .l-control::before, .l-video::before { left: 0; right: 2px; top: auto; bottom: 0; width: auto; height: 1px; }
+  .l-control::after, .l-video::after { left: auto; right: 0; bottom: -4px; clip-path: polygon(0 0, 100% 50%, 0 100%); }
+
+  /* ground control hangs off the aircraft on a dashed line: only for mapping missions */
+  .l-map { min-height: 0; padding: 0 0 0 calc(50% + 14px); background: none; white-space: nowrap; }
+  .l-map::before { left: 50%; }
+
+  /* the return loop runs under the chain, from the goggles back up to the radios */
+  .l-loop { z-index: 0; justify-content: flex-start; padding: 22px 0 0 56px; }
+  .l-loop::before { content: ""; inset: 0 32px 13px; width: auto; border: 1px solid var(--muted); border-top: 0; }
+  .l-loop::after {
+    content: ""; position: absolute; left: 28px; top: 0; width: 9px; height: 9px;
+    background: var(--accent); clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  }
+}
 
 /* ── Projects ── */
 .project { border: 1px solid var(--line); background: var(--surface); padding: clamp(22px, 3vw, 36px); display: flex; flex-direction: column; gap: 14px; }
