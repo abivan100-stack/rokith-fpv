@@ -142,20 +142,39 @@
         <ol class="spec-sheet" id="spec-sheet" aria-label="Aircraft specifications"></ol>
       </div>
 
-      <!-- Part 3: the kit, as a pre-flight checklist. -->
-      <div class="checklist reveal">
-        <h3>Pre-flight checklist</h3>
-        <dl>
-          <div><dt>Goggles</dt><dd>Walksnail Avatar V1 (digital)</dd></div>
-          <div><dt>Goggles</dt><dd>Skyzone Cobra X V2</dd></div>
-          <div><dt>Radio</dt><dd>RadioMaster Zorro</dd></div>
-          <div><dt>Radio</dt><dd>RadioMaster TX12</dd></div>
-          <div><dt>Radio</dt><dd>RadioMaster TX15</dd></div>
-          <div><dt>Radio</dt><dd>Jumper Elf</dd></div>
-          <div><dt>Control link</dt><dd>ExpressLRS</dd></div>
-          <div><dt>Firmware</dt><dd>Betaflight, INAV, ArduPilot, PX4</dd></div>
-          <div><dt>Ground control</dt><dd>Mission Planner</dd></div>
-        </dl>
+      <!-- Part 3: the kit, as a signal chain: hands on the radio, the aircraft, eyes in the goggles, and back. -->
+      <div class="kit reveal">
+        <div class="kit-head">
+          <p class="mono-label">Pre-flight · The kit</p>
+          <h3>Signal chain</h3>
+          <p>How the kit connects, from the pilot's hands to the aircraft and back to his eyes.</p>
+        </div>
+        <ol class="chain">
+          <li class="node n-hands">
+            <p class="node-step">01 Hands</p>
+            <h4>Radios <span aria-hidden="true">×4</span></h4>
+            <ul><li>RadioMaster Zorro</li><li>RadioMaster TX12</li><li>RadioMaster TX15</li><li>Jumper Elf</li></ul>
+          </li>
+          <li class="link l-control"><span class="link-name">Control link</span> <span class="link-sub">ExpressLRS</span></li>
+          <li class="node n-air">
+            <p class="node-step"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/><circle cx="5.5" cy="5.5" r="3"/><circle cx="18.5" cy="5.5" r="3"/><circle cx="5.5" cy="18.5" r="3"/><circle cx="18.5" cy="18.5" r="3"/></svg>02 Aircraft</p>
+            <h4>Flight firmware <span aria-hidden="true">×4</span></h4>
+            <ul><li>Betaflight</li><li>INAV</li><li>ArduPilot</li><li>PX4</li></ul>
+          </li>
+          <li class="link l-video"><span class="link-name">Video link</span> <span class="link-sub">The live view</span></li>
+          <li class="node n-eyes">
+            <p class="node-step">03 Eyes</p>
+            <h4>Goggles <span aria-hidden="true">×2</span></h4>
+            <ul><li>Walksnail Avatar V1 (digital)</li><li>Skyzone Cobra X V2</li></ul>
+          </li>
+          <li class="link l-map"><span class="link-name">Mapping missions</span> <span class="link-sub">Aircraft ↔ ground</span></li>
+          <li class="node n-ground">
+            <p class="node-step">04 Ground</p>
+            <h4>Ground control</h4>
+            <ul><li>Mission Planner</li></ul>
+          </li>
+          <li class="link l-loop"><span class="link-name">Back to 01</span> <span class="link-sub">The pilot sees, then steers</span></li>
+        </ol>
       </div>
     </section>
 
