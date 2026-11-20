@@ -78,7 +78,7 @@ a { color: inherit; }
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
 }
-:root[data-theme="dark"] .top { background: var(--bg); backdrop-filter: none; }  /* solid title strip, no frosted glass */
+:root[data-theme="dark"] header.top { background: var(--bg); backdrop-filter: none; }  /* solid title strip, no frosted glass */
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 500 14px var(--mono); letter-spacing: .04em; }
 .brand svg, .rail-marker svg { width: 20px; height: 20px; fill: none; stroke: var(--accent); stroke-width: 1.6; stroke-linecap: round; }
 .nav { margin-left: auto; display: flex; gap: clamp(12px, 2vw, 28px); }
@@ -227,6 +227,7 @@ a { color: inherit; }
 .qa .shadow { fill: var(--ink); opacity: .09; }
 .qa .part .top, .qa .part .side, .qa .part .blade, .qa .part .ant { transition: fill .4s ease, stroke .4s ease; }
 .qa .part.on .top { fill: color-mix(in srgb, var(--accent) 14%, var(--surface)); stroke: var(--accent); }
+:root[data-theme="dark"] .qa .part.on .top { fill: var(--surface); }  /* orange tint turns brown on the blue sheet: keep the redline outline only */
 .qa .part.on .side { stroke: var(--accent); }
 .qa .part.on .blade { fill: var(--accent); fill-opacity: 1; }
 .qa .part.on .ant { stroke: var(--accent); }
