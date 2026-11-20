@@ -18,6 +18,7 @@
   $('theme-toggle').addEventListener('click', function () {
     var next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
     document.documentElement.dataset.theme = next;
+    document.querySelector('meta[name="theme-color"]').content = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
     try { localStorage.setItem('rokith-theme', next); } catch (e) {}
   });
 

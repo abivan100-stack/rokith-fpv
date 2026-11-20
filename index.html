@@ -21,6 +21,8 @@
       try { t = localStorage.getItem('rokith-theme'); } catch (e) {}
       document.documentElement.dataset.theme = t === 'dark' ? 'dark' : 'light';
       document.documentElement.classList.add('js');
+      // mobile browser bar matches the sheet (--bg of the active theme)
+      if (t === 'dark') document.querySelector('meta[name="theme-color"]').content = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
     })();
   </script>
 </head>
