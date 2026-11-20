@@ -14,14 +14,6 @@
     $('year').textContent = now.getFullYear();
   })();
 
-  /* ── Theme toggle ── */
-  $('theme-toggle').addEventListener('click', function () {
-    var next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
-    document.documentElement.dataset.theme = next;
-    document.querySelector('meta[name="theme-color"]').content = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
-    try { localStorage.setItem('rokith-theme', next); } catch (e) {}
-  });
-
   /* ── Optional photos: drop a file at the path and it appears. Missing files are ignored. ── */
   function tryPhoto(src, alt, onload) {
     var img = new Image();
@@ -649,7 +641,6 @@
     });
     hero.addEventListener('pointerleave', function () { target = null; });
     addEventListener('resize', function () { size(); kick(); });
-    new MutationObserver(kick).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (en) { visible = en[0].isIntersecting; kick(); }).observe(hero);
     }
