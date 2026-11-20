@@ -106,54 +106,56 @@
     </section>
 
     <!-- ───────────── FLEET ───────────── -->
-    <section class="section" id="fleet" data-wp="02 Hangar">
+    <section class="section fleet" id="fleet" data-wp="02 Hangar">
       <header class="sec-head">
         <p class="sec-no">WP 02 / Hangar</p>
         <h2>Five aircraft. Every one built and tuned by hand.</h2>
       </header>
 
-      <div class="hangar reveal">
-        <div class="hangar-tabs" role="tablist" aria-label="Aircraft" id="fleet-tabs"></div>
-        <div class="hangar-panel" role="tabpanel" id="fleet-panel" aria-live="polite">
-          <div class="blueprint" id="fleet-blueprint"></div>
-          <div class="hangar-info">
-            <p class="mono-label" id="fleet-class"></p>
-            <h3 id="fleet-name"></h3>
-            <p id="fleet-desc"></p>
-            <dl class="spec">
-              <div><dt>Prop class</dt><dd id="fleet-size"></dd></div>
-              <div><dt>Role</dt><dd id="fleet-role"></dd></div>
-              <div><dt>Build</dt><dd>Assembled by Rokith</dd></div>
-              <div><dt>Tune</dt><dd>Tuned by Rokith</dd></div>
-            </dl>
+      <!-- Part 1: the build. Scrolling assembles an exploded quad, one stage at a time. -->
+      <div class="build" id="build">
+        <div class="build-stage">
+          <ol class="build-steps" id="build-steps">
+            <li data-step="0"><span class="bs-n">01</span><div><h3>Frame</h3><p>The frame sets the size of the aircraft, from 3-inch micro racers to the 10-inch Agrifly.</p></div></li>
+            <li data-step="1"><span class="bs-n">02</span><div><h3>Motors</h3><p>Four motors, matched to the frame and the propeller size.</p></div></li>
+            <li data-step="2"><span class="bs-n">03</span><div><h3>Flight stack</h3><p>The flight controller and ESCs: the aircraft's brain and its power delivery.</p></div></li>
+            <li data-step="3"><span class="bs-n">04</span><div><h3>Camera and video</h3><p>The FPV camera and video transmitter send the live view to the pilot's goggles.</p></div></li>
+            <li data-step="4"><span class="bs-n">05</span><div><h3>Receiver</h3><p>An ExpressLRS receiver links the aircraft to the pilot's radio.</p></div></li>
+            <li data-step="5"><span class="bs-n">06</span><div><h3>Propellers</h3><p>Sized to each airframe: 3-inch, 5-inch or 10-inch.</p></div></li>
+            <li data-step="6"><span class="bs-n">07</span><div><h3>Tune</h3><p>Configured and tuned by Rokith in Betaflight, INAV, ArduPilot or PX4, with Mission Planner for mapping missions.</p></div></li>
+          </ol>
+          <div class="build-view">
+            <svg class="build-art" id="build-art" viewBox="-125 -412 250 474" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Exploded drawing of an FPV quadcopter that assembles as you scroll"></svg>
+            <div class="build-meter" aria-hidden="true"><span id="build-meter"></span></div>
           </div>
         </div>
       </div>
 
-      <div class="gear-grid">
-        <article class="gear reveal">
-          <p class="mono-label">Firmware &amp; ground control</p>
-          <ul class="chips">
-            <li>Betaflight</li><li>INAV</li><li>ArduPilot</li><li>PX4</li><li>Mission Planner</li>
-          </ul>
-        </article>
-        <article class="gear reveal">
-          <p class="mono-label">Goggles</p>
-          <ul class="plain">
-            <li>Walksnail Avatar V1 <span>Digital</span></li>
-            <li>Skyzone Cobra X V2</li>
-          </ul>
-        </article>
-        <article class="gear reveal">
-          <p class="mono-label">Radios &amp; link</p>
-          <ul class="plain">
-            <li>RadioMaster Zorro</li>
-            <li>RadioMaster TX12</li>
-            <li>RadioMaster TX15</li>
-            <li>Jumper Elf</li>
-            <li>ExpressLRS <span>Control link</span></li>
-          </ul>
-        </article>
+      <!-- Part 2: the hangar row. Each aircraft hovers over its pad, drawn to scale by propeller size. -->
+      <div class="hangar-head">
+        <h3>The hangar</h3>
+        <p>Drawn to scale by propeller size. Hover over or tap an aircraft to spin it up.</p>
+        <div class="hangar-nav">
+          <button type="button" id="hangar-prev" aria-label="Previous aircraft"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <button type="button" id="hangar-next" aria-label="Next aircraft"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+      <ol class="hangar-row" id="hangar-row" aria-label="Aircraft"></ol>
+
+      <!-- Part 3: the kit, as a pre-flight checklist. -->
+      <div class="checklist reveal">
+        <h3>Pre-flight checklist</h3>
+        <dl>
+          <div><dt>Goggles</dt><dd>Walksnail Avatar V1 (digital)</dd></div>
+          <div><dt>Goggles</dt><dd>Skyzone Cobra X V2</dd></div>
+          <div><dt>Radio</dt><dd>RadioMaster Zorro</dd></div>
+          <div><dt>Radio</dt><dd>RadioMaster TX12</dd></div>
+          <div><dt>Radio</dt><dd>RadioMaster TX15</dd></div>
+          <div><dt>Radio</dt><dd>Jumper Elf</dd></div>
+          <div><dt>Control link</dt><dd>ExpressLRS</dd></div>
+          <div><dt>Firmware</dt><dd>Betaflight, INAV, ArduPilot, PX4</dd></div>
+          <div><dt>Ground control</dt><dd>Mission Planner</dd></div>
+        </dl>
       </div>
     </section>
 

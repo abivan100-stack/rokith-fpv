@@ -181,67 +181,127 @@ a { color: inherit; }
   .facts > div { grid-template-columns: 120px 1fr; }
 }
 
-/* ── Hangar ── */
-.hangar { display: grid; grid-template-columns: 240px minmax(0, 1fr); border: 1px solid var(--ink); background: var(--surface); }
-.hangar-tabs { display: flex; flex-direction: column; border-right: 1px solid var(--ink); }
-.hangar-tabs button {
-  all: unset; box-sizing: border-box; cursor: pointer;
-  display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
-  padding: 18px 20px; border-bottom: 1px solid var(--line);
-  font: 600 18px var(--display); font-stretch: 108%;
+/* ── Hangar ──
+   Three movements: the build (scroll assembles an exploded quad), the hangar row
+   (all five aircraft hovering over their pads, to scale), and the pre-flight checklist. */
+
+/* Shared isometric line-art */
+.qa * { vector-effect: non-scaling-stroke; }
+.qa .top { fill: var(--surface); stroke: var(--ink); stroke-width: 1.3; stroke-linejoin: round; }
+.qa .side { fill: color-mix(in srgb, var(--ink) 16%, var(--surface)); stroke: var(--ink); stroke-width: 1.3; stroke-linejoin: round; }
+.qa .lens { fill: #15171a; stroke: var(--ink); stroke-width: 1; }
+.qa .glint { fill: var(--accent); }
+.qa .ant { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; }
+.qa .ant-tip { fill: var(--ink); }
+.qa .blade { fill: var(--ink); fill-opacity: .82; stroke: none; }
+.qa .hub { fill: var(--surface); stroke: var(--ink); stroke-width: 1.3; }
+.qa .disc { fill: color-mix(in srgb, var(--accent) 7%, transparent); stroke: var(--accent); stroke-width: 1; stroke-dasharray: 3 4; opacity: 0; transition: opacity .3s ease; }
+.qa.spinning .disc { opacity: 1; }
+.qa .duct { fill: none; stroke: var(--ink); stroke-width: 2; }
+.qa .duct-back { fill: none; stroke: var(--ink); stroke-width: 1.3; stroke-opacity: .5; }
+.qa .pad { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 4 5; }
+.qa .pad-inner { fill: none; stroke: var(--line); stroke-width: 1; }
+.qa .shadow { fill: var(--ink); opacity: .09; }
+.qa .part .top, .qa .part .side, .qa .part .blade, .qa .part .ant { transition: fill .4s ease, stroke .4s ease; }
+.qa .part.on .top { fill: color-mix(in srgb, var(--accent) 14%, var(--surface)); stroke: var(--accent); }
+.qa .part.on .side { stroke: var(--accent); }
+.qa .part.on .blade { fill: var(--accent); fill-opacity: 1; }
+.qa .part.on .ant { stroke: var(--accent); }
+
+/* 1. The build */
+.build { position: relative; margin-top: clamp(8px, 2vw, 24px); }
+.js .build { height: 460vh; }
+.build-stage {
+  display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+  gap: clamp(24px, 5vw, 72px); align-items: center;
 }
-.hangar-tabs button:last-child { border-bottom: 0; flex: 1; align-items: flex-start; }
-.hangar-tabs button span { font: 500 11px var(--mono); letter-spacing: .08em; color: var(--muted); }
-.hangar-tabs button:hover { background: var(--bg); }
-.hangar-tabs button[aria-selected="true"] { background: var(--ink); color: var(--bg); }
-.hangar-tabs button[aria-selected="true"] span { color: var(--accent); }
-.hangar-tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
-.hangar-panel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); min-height: 420px; }
-.blueprint {
-  position: relative; display: grid; place-items: center; padding: 20px;
-  border-right: 1px solid var(--line);
-  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: 20px 20px;
-}
-.blueprint svg { width: 100%; max-width: 360px; height: auto; }
-.blueprint .bp { fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-linecap: round; }
-.blueprint .bp-thin { fill: none; stroke: var(--muted); stroke-width: .8; stroke-dasharray: 3 4; }
-.blueprint .bp-acc { fill: none; stroke: var(--accent); stroke-width: 1.4; }
-.blueprint .bp-fill { fill: var(--surface); stroke: var(--ink); stroke-width: 1.4; }
-.blueprint text { font: 500 9px var(--mono); letter-spacing: .1em; fill: var(--muted); }
-.blueprint .prop { transform-box: fill-box; transform-origin: center; animation: spin 1.1s linear infinite; }
-.blueprint .prop.ccw { animation-direction: reverse; }
-@keyframes spin { to { transform: rotate(360deg); } }
-.blueprint img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.hangar-info { padding: clamp(20px, 3vw, 36px); display: flex; flex-direction: column; gap: 14px; }
-.hangar-info h3 { font: 800 clamp(34px, 4.4vw, 56px)/1 var(--display); font-stretch: 115%; letter-spacing: -.02em; text-transform: uppercase; }
-.hangar-info > p:not(.mono-label) { color: var(--muted); max-width: 44ch; }
-.spec { margin-top: auto; border-top: 1px solid var(--ink); }
-.spec > div { display: grid; grid-template-columns: 110px 1fr; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--line); }
-.spec dt { font: 500 11px/1.9 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-.spec dd { font-weight: 500; font-size: 15px; }
-@media (max-width: 960px) {
-  .hangar { grid-template-columns: 1fr; }
-  .hangar-tabs { flex-direction: row; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--ink); }
-  .hangar-tabs button { flex: 0 0 auto; flex-direction: column; gap: 2px; border-bottom: 0; border-right: 1px solid var(--line); padding: 14px 18px; }
-  .hangar-tabs button:last-child { flex: 0 0 auto; }
-}
-@media (max-width: 640px) {
-  .hangar-panel { grid-template-columns: 1fr; }
-  .blueprint { border-right: 0; border-bottom: 1px solid var(--line); }
+.js .build-stage { position: sticky; top: 56px; height: calc(100vh - 56px); height: calc(100svh - 56px); padding: 24px 0; }
+.build-steps { counter-reset: none; }
+.build-steps li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 4px; padding: 12px 0; border-top: 1px solid var(--line); opacity: .38; transition: opacity .3s ease; }
+.build-steps li:last-child { border-bottom: 1px solid var(--line); }
+.build-steps li.done { opacity: .62; }
+.build-steps li.on { opacity: 1; }
+.no-build .build-steps li { opacity: 1; }
+.bs-n { font: 500 12px/2 var(--mono); letter-spacing: .1em; color: var(--muted); }
+.build-steps li.on .bs-n { color: var(--accent-ink); }
+.build-steps h3 { font: 700 19px/1.3 var(--display); font-stretch: 106%; }
+.build-steps p { font-size: 15px; line-height: 1.5; color: var(--muted); max-height: 0; overflow: hidden; transition: max-height .4s ease, margin .4s ease; }
+.build-steps li.on p, .no-build .build-steps p { max-height: 6em; margin-top: 4px; }
+.build-view { position: relative; height: 100%; min-height: 0; display: flex; flex-direction: column; }
+.build-art { flex: 1; width: 100%; min-height: 0; }
+.js .build.no-build { height: auto; }
+.js .no-build .build-stage { position: static; height: auto; }
+.no-build .build-view { height: min(70vh, 560px); }
+.build-meter { height: 2px; background: var(--line); margin: 12px 0 0; }
+.build-meter span { display: block; height: 100%; background: var(--accent); transform: scaleX(0); transform-origin: left; }
+
+@media (max-width: 860px) {
+  .build-stage { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; gap: 12px; }
+  .build-view { grid-row: 1; }
+  .build-steps { grid-row: 2; }
+  .js .build-steps li { display: none; border: 0; padding: 0; }
+  .js .build-steps li.on { display: grid; }
+  .build-steps li.on p { max-height: none; }
 }
 
-.gear-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin-top: 32px; border-top: 1px solid var(--ink); }
-.gear { padding: 22px 24px 8px 0; }
-.gear + .gear { padding-left: 24px; border-left: 1px solid var(--line); }
-.gear .mono-label { margin-bottom: 14px; }
-.plain li { padding: 7px 0; border-bottom: 1px solid var(--line); font-weight: 500; display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
-.plain li:last-child { border-bottom: 0; }
-.plain span { font: 500 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-@media (max-width: 760px) {
-  .gear-grid { grid-template-columns: 1fr; }
-  .gear, .gear + .gear { padding: 20px 0; border-left: 0; border-bottom: 1px solid var(--line); }
+/* 2. The hangar row */
+.hangar-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 8px 24px; margin-top: clamp(64px, 9vw, 120px); }
+.hangar-head h3 { font: 700 clamp(26px, 3vw, 36px)/1.1 var(--display); font-stretch: 108%; letter-spacing: -.01em; }
+.hangar-head p { grid-column: 1; color: var(--muted); }
+.hangar-nav { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: 8px; }
+.hangar-nav button { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid var(--ink); border-radius: 50%; background: var(--bg); color: var(--ink); cursor: pointer; transition: background-color .15s, color .15s; }
+.hangar-nav button:hover:not(:disabled) { background: var(--ink); color: var(--bg); }
+.hangar-nav button:disabled { opacity: .3; cursor: default; }
+.hangar-nav svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+.hangar-row {
+  --k: 1;
+  position: relative; /* bays measure offsetLeft against the row */
+  display: flex; margin-top: 24px;
+  overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth;
+  border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink);
+  scrollbar-width: thin; scrollbar-color: var(--line) transparent;
 }
+.bay {
+  flex: 0 0 max(260px, calc(var(--aw) * var(--k) + 56px));
+  scroll-snap-align: start;
+  padding: 28px 28px 32px;
+  display: flex; flex-direction: column; gap: 10px;
+  outline-offset: -3px;
+}
+.bay + .bay { border-left: 1px dashed var(--line); }
+.bay-art { height: calc(340px * var(--k)); display: flex; align-items: flex-end; justify-content: center; margin-bottom: 14px; }
+.bay-art.has-photo img { width: 100%; height: 100%; object-fit: cover; }
+.bay-art svg { width: calc(var(--aw) * var(--k)); height: auto; overflow: visible; }
+.bay .drone { transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
+.bay:hover .drone, .bay:focus-visible .drone { transform: translateY(var(--lift)); }
+.bay-class { font: 500 11px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--accent-ink); }
+.bay-name { font: 800 clamp(28px, 3vw, 38px)/1 var(--display); font-stretch: 112%; letter-spacing: -.02em; text-transform: uppercase; }
+.bay-spec { border-top: 1px solid var(--ink); }
+.bay-spec > div { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.bay-spec dt { font: 500 11px/1.9 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+.bay-spec dd { font-weight: 600; text-align: right; }
+.bay-desc { font-size: 15px; color: var(--muted); max-width: 40ch; }
+@media (max-width: 700px) {
+  .hangar-row { --k: .62; }
+  .bay { padding: 22px 18px 24px; flex-basis: max(240px, calc(var(--aw) * var(--k) + 36px)); }
+}
+
+/* 3. Pre-flight checklist */
+.checklist { margin-top: clamp(56px, 7vw, 88px); border: 1px solid var(--ink); background: var(--surface); padding: clamp(22px, 3vw, 36px); }
+.checklist h3 { font: 700 22px/1.2 var(--display); font-stretch: 108%; margin-bottom: 18px; }
+.checklist dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; }
+.checklist dl > div { display: flex; align-items: baseline; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.checklist dl > div::before {
+  content: ""; flex: none; width: 14px; height: 14px; align-self: center;
+  border-radius: 2px;
+  background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M3 7.2l2.6 2.6L11 4.4' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% no-repeat;
+}
+.checklist dt { font: 500 11px/1.4 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+.checklist dl > div > dt { display: flex; flex: 1; align-items: baseline; gap: 8px; }
+.checklist dl > div > dt::after { content: ""; flex: 1; min-width: 16px; border-bottom: 1px dotted var(--muted); transform: translateY(-3px); }
+.checklist dd { font-weight: 600; text-align: right; }
+@media (max-width: 760px) { .checklist dl { grid-template-columns: 1fr; } }
 
 /* ── Projects ── */
 .project { border: 1px solid var(--line); background: var(--surface); padding: clamp(22px, 3vw, 36px); display: flex; flex-direction: column; gap: 14px; }
@@ -328,6 +388,6 @@ a { color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .js .reveal { opacity: 1; transform: none; transition: none; }
-  .blueprint .prop { animation: none; }
+  .qa .disc, .bay .drone, .build-steps li, .build-steps p { transition: none; }
   .btn, .links a { transition: none; }
 }
