@@ -249,7 +249,7 @@
     render(cur);
   })();
 
-  /* 2. The hangar row: every aircraft to scale, hovering over its pad */
+  /* 2. The hangar: every aircraft side by side on one ground line, to scale, keyed to a spec sheet */
   var fleet = [
     { id: 'agrifly', name: 'Agrifly', inch: 10, cls: 'Agricultural UAV', role: 'Pesticide spraying and crop monitoring',
       desc: 'The largest aircraft in the fleet. A 10-inch platform built for agricultural pesticide spraying and field monitoring, and the airframe behind the Agrifly project.' },
@@ -263,25 +263,37 @@
       desc: 'A ducted cinematic rig for smooth, close-proximity FPV footage.' }
   ];
   (function () {
-    var row = $('hangar-row'), prev = $('hangar-prev'), next = $('hangar-next');
-    fleet.forEach(function (d) {
-      var s = d.inch / 5, Q = quad(s, d.ducts), lift = 20 * s;
+    var hangar = $('hangar'), lineup = $('lineup'), sheet = $('spec-sheet'), sets = {};
+    // Columns are as wide as each aircraft's propeller size, and each drawing fills its column, so the lineup is to scale.
+    lineup.style.gridTemplateColumns = fleet.map(function (d) { return 'minmax(0, ' + d.inch + 'fr)'; }).join(' ');
+    // Scale bar: 10 inches of propeller as a share of the lineup width. A 5-inch prop disc spans 84 * KX
+    // of its drawing's 284-unit-wide viewBox, and that drawing fills 5 of the lineup's fr.
+    var total = fleet.reduce(function (n, d) { return n + d.inch; }, 0);
+    hangar.style.setProperty('--ten-in', (84 * KX / 284 * 10 / total * 100).toFixed(2) + '%');
+    function pair(id, on) {
+      hangar.querySelectorAll('[data-craft="' + id + '"]').forEach(function (el) { el.classList.toggle('is-on', on); });
+      setSpin(sets[id], on);
+    }
+    fleet.forEach(function (d, i) {
+      var s = d.inch / 5, Q = quad(s, d.ducts), lift = 20 * s, n = i + 1;
       var vb = [-142 * s, -124 * s, 284 * s, 208 * s];
-      var svg = '<svg viewBox="' + vb.map(f).join(' ') + '" role="img" aria-label="Drawing of ' + d.name + ', ' + d.inch + '-inch">' +
-        '<g class="qa">' +
-          flatEllipse(0, 0, 0, 112 * s, 'pad') + flatEllipse(0, 0, 0, 84 * s, 'pad-inner') + flatEllipse(0, 0, 0, 48 * s, 'shadow') +
-          '<g class="drone"><g transform="translate(0 ' + f(-lift) + ')">' +
-            Q.frame + Q.motors + Q.receiver + Q.stack + Q.camera + Q.props +
-          '</g></g>' +
-        '</g></svg>';
-      var li = document.createElement('li');
-      li.className = 'bay';
-      li.tabIndex = 0;
-      li.style.setProperty('--aw', Math.round(284 * s * 0.9) + 'px');
-      li.style.setProperty('--lift', f(-10 * s) + 'px');
-      li.innerHTML =
-        '<div class="bay-art">' + svg + '</div>' +
-        '<p class="bay-class">' + d.cls + '</p>' +
+      var item = document.createElement('li'), card = document.createElement('li');
+      item.className = 'craft';
+      card.className = 'spec-card';
+      item.dataset.craft = card.dataset.craft = d.id;
+      item.style.setProperty('--lift', f(-10 * s) + 'px');  // SVG user units, so the lift scales with the drawing
+      item.innerHTML =
+        '<svg viewBox="' + vb.map(f).join(' ') + '" role="img" aria-label="Drawing of ' + d.name + ', ' + d.inch + '-inch">' +
+          '<g class="qa">' +
+            flatEllipse(0, 0, 0, 112 * s, 'pad') + flatEllipse(0, 0, 0, 84 * s, 'pad-inner') + flatEllipse(0, 0, 0, 48 * s, 'shadow') +
+            '<g class="drone"><g transform="translate(0 ' + f(-lift) + ')">' +
+              Q.frame + Q.motors + Q.receiver + Q.stack + Q.camera + Q.props +
+            '</g></g>' +
+          '</g></svg>' +
+        '<p class="craft-tag" aria-hidden="true"><span class="callout">' + n + '</span><span class="craft-inch">' + d.inch + '&Prime;</span></p>';
+      card.innerHTML =
+        '<div class="spec-photo"></div>' +
+        '<p class="bay-class"><span class="callout" aria-hidden="true">' + n + '</span>' + d.cls + '</p>' +
         '<h4 class="bay-name">' + d.name + '</h4>' +
         '<dl class="bay-spec">' +
           '<div><dt>Propeller</dt><dd>' + d.inch + '-inch</dd></div>' +
@@ -289,39 +301,24 @@
           '<div><dt>Built and tuned</dt><dd>By Rokith</dd></div>' +
         '</dl>' +
         '<p class="bay-desc">' + d.desc + '</p>';
-      row.appendChild(li);
-      var set = spinSet(li.querySelector('.qa'), Q.blades);
-      var on = function () { setSpin(set, true); }, off = function () { setSpin(set, false); };
-      li.addEventListener('mouseenter', on);
-      li.addEventListener('mouseleave', off);
-      li.addEventListener('focus', on);
-      li.addEventListener('blur', off);
+      lineup.appendChild(item);
+      sheet.appendChild(card);
+      sets[d.id] = spinSet(item.querySelector('.qa'), Q.blades);
+      [item, card].forEach(function (el) {
+        el.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') pair(d.id, true); });
+        el.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') pair(d.id, false); });
+        // Touch has no hover: a tap spins this aircraft up and the others down.
+        el.addEventListener('pointerdown', function (e) {
+          if (e.pointerType === 'mouse') return;
+          var on = !el.classList.contains('is-on');
+          fleet.forEach(function (o) { pair(o.id, on && o.id === d.id); });
+        });
+      });
+      // Photos can't be kept to scale, so they go in the spec card; the lineup stays line art.
       tryPhoto('assets/drones/' + d.id + '.jpg', d.name, function (img) {
-        var box = li.querySelector('.bay-art');
-        box.innerHTML = '';
-        box.classList.add('has-photo');
-        box.appendChild(img);
+        card.querySelector('.spec-photo').appendChild(img);
       });
     });
-
-    var bays = Array.prototype.slice.call(row.children);
-    function edges() {
-      var max = row.scrollWidth - row.clientWidth;
-      prev.disabled = row.scrollLeft <= 2;
-      next.disabled = row.scrollLeft >= max - 2;
-    }
-    function go(dir) {
-      var x = row.scrollLeft, target = null;
-      if (dir > 0) { for (var i = 0; i < bays.length; i++) if (bays[i].offsetLeft > x + 4) { target = bays[i].offsetLeft; break; } }
-      else { for (var j = bays.length - 1; j >= 0; j--) if (bays[j].offsetLeft < x - 4) { target = bays[j].offsetLeft; break; } }
-      if (target === null) target = dir > 0 ? row.scrollWidth : 0;
-      row.scrollTo({ left: target, behavior: reduceMotion ? 'auto' : 'smooth' });
-    }
-    prev.addEventListener('click', function () { go(-1); });
-    next.addEventListener('click', function () { go(1); });
-    row.addEventListener('scroll', edges, { passive: true });
-    addEventListener('resize', edges);
-    edges();
   })();
 
   /* ── Projects: the Agrifly mission sheet draws the same 10-inch aircraft as the hangar ── */
