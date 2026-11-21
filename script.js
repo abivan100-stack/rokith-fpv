@@ -912,123 +912,62 @@
 
   /* ── Hero: a line-art quad that follows the cursor and leaves a flight trail ── */
   (function () {
-    var cv = $('sky'), hero = $('hero'), airEl = $('hero-air'), modeEl = $('hero-mode'), ctx = cv.getContext('2d');
-    var W = 0, H = 0, dpr = 1, k = 0.46, air = { x: 0, w: 0, t: 0, b: 0 };
-    var pos = { x: 0, y: 0 }, vel = { x: 0, y: 0 }, target = null, heading = 0, lastMove = -1e9, mode = '';
+    var cv = $('sky'), hero = $('hero'), ctx = cv.getContext('2d');
+    var W = 0, H = 0, dpr = 1;
+    var pos = { x: 0, y: 0 }, vel = { x: 0, y: 0 }, target = null, heading = 0, lastMove = -1e9;
     var trail = [], t0 = performance.now(), visible = true, raf = 0, spin = 0;
-
-    // The lede's age comes from the About calculation above, so the two never disagree.
-    $('hero-age').textContent = $('age').textContent;
 
     function size() {
       dpr = Math.min(2, devicePixelRatio || 1);
       W = hero.clientWidth; H = hero.clientHeight;
       cv.width = W * dpr; cv.height = H * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      var h = hero.getBoundingClientRect(), a = airEl.getBoundingClientRect();
-      air = { x: a.left - h.left, w: a.width, t: a.top - h.top, b: a.bottom - h.top };
-      // the readouts sit in the box's corners: fly only in the band between them
-      airEl.querySelectorAll('p').forEach(function (el) {
-        var r = el.getBoundingClientRect(), top = r.top - h.top, bot = r.bottom - h.top;
-        if (top + bot < a.top + a.bottom - 2 * h.top) air.t = Math.max(air.t, bot); else air.b = Math.min(air.b, top);
-      });
-      k = W <= 820 ? 0.34 : air.w < 400 ? 0.4 : 0.46;   // px per quad() unit: about 90px across on wide screens
-      if (reduceMotion) park();
-      else if (!pos.x) { var p = auto(0); pos.x = p.x; pos.y = p.y; }
+      if (!pos.x) { pos.x = W * 0.72; pos.y = H * 0.45; }
     }
     function colors() {
       var cs = getComputedStyle(document.documentElement);
-      return { ink: cs.getPropertyValue('--ink').trim(), accent: cs.getPropertyValue('--accent').trim(), surface: cs.getPropertyValue('--surface').trim() };
+      return { ink: cs.getPropertyValue('--ink').trim(), accent: cs.getPropertyValue('--accent').trim(), muted: cs.getPropertyValue('--muted').trim() };
     }
-    // With no pointer, the quad loiters on a slow figure-eight inside the airspace box (#hero-air), never over the text.
-    // The amplitudes leave room for the aircraft's own span and the spring's overshoot.
+    // With no pointer, the quad flies a slow figure-eight on the open side of the hero.
     function auto(t) {
-      var r = 97 * k + 18;
-      var ax = Math.max(0, Math.min(air.w / 2 - r, 240)), ay = Math.max(0, Math.min((air.b - air.t) / 2 - r, 80));
-      return { x: air.x + air.w / 2 + Math.sin(t * 0.00045) * ax, y: (air.t + air.b) / 2 + Math.sin(t * 0.0009) * ay };
+      var wide = W > 820;
+      var cx = wide ? W * 0.72 : W * 0.5, cy = wide ? H * 0.48 : 100;
+      var ax = wide ? W * 0.18 : W * 0.32, ay = wide ? H * 0.24 : 14;
+      return { x: cx + Math.sin(t * 0.00045) * ax, y: cy + Math.sin(t * 0.0009) * ay };
     }
-    // Reduced motion: fly the loop off screen for a few seconds and draw only the last frame, trail included.
-    function park() {
-      var p = auto(0);
-      pos = { x: p.x, y: p.y }; vel = { x: 0, y: 0 }; trail = []; heading = 0;
-      for (var i = 0; i < 260; i++) step(auto(i * 16.7));
-    }
-
-    // Plan view of quad() (same parts and proportions: X frame, octagon plate, stack, camera at the nose,
-    // receiver and antennas at the tail), drawn in the hangar's line-art style. Nose is local -y.
-    function pts(list) { return list.map(function (q) { return [q[1], -q[0]]; }); }
-    function shape(list) {
+    function drawQuad(c, s) {
+      var arm = 17 * s, r = 11 * s;
+      ctx.save();
+      ctx.translate(pos.x, pos.y);
+      ctx.rotate(heading);
+      ctx.lineWidth = 1.5; ctx.lineCap = 'round';
+      ctx.strokeStyle = c.ink;
       ctx.beginPath();
-      list.forEach(function (q, i) { if (i) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]); });
-      ctx.closePath();
-    }
-    var A = 55, R = 42, MOTORS = [[A, -A, -1], [A, A, 1], [-A, -A, 1], [-A, A, -1]];
-    var PLATE = pts([[34, -14], [34, 14], [22, 20], [-22, 20], [-34, 14], [-34, -14], [-22, -20], [22, -20]]);
-    function arm(m) {
-      var len = Math.hypot(m[0], m[1]), w = 5.5, nu = -m[1] / len * w, nv = m[0] / len * w;
-      return pts([[nu, nv], [m[0] + nu, m[1] + nv], [m[0] - nu, m[1] - nv], [-nu, -nv]]);
-    }
-    function airframe() {   // arms + plate + motor bells as one path, for the ground shadow
-      MOTORS.forEach(function (m) { shape(arm(m)); ctx.fill(); var p = pts([m])[0]; ctx.beginPath(); ctx.arc(p[0], p[1], 9, 0, 6.2832); ctx.fill(); });
-      shape(PLATE); ctx.fill();
-    }
-    function drawQuad(c) {
-      var lw = 1.15 / k;
-      ctx.save();
-      // ground shadow, offset down and right like the hangar drawings' cast shadows
-      ctx.translate(pos.x + 7, pos.y + 11); ctx.rotate(heading); ctx.scale(k, k);
-      ctx.globalAlpha = 0.07; ctx.fillStyle = c.ink; airframe();
-      ctx.restore();
-
-      ctx.save();
-      ctx.translate(pos.x, pos.y); ctx.rotate(heading); ctx.scale(k, k);
-      ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.lineWidth = lw;
-      // prop discs: the accent wash and dashed rim the hangar shows when its props spin
-      ctx.setLineDash([3 / k, 4 / k]);
-      MOTORS.forEach(function (m) {
-        var p = pts([m])[0];
-        ctx.beginPath(); ctx.arc(p[0], p[1], R, 0, 6.2832);
-        ctx.globalAlpha = 0.07; ctx.fillStyle = c.accent; ctx.fill();
-        ctx.globalAlpha = 1; ctx.strokeStyle = c.accent; ctx.stroke();
-      });
-      ctx.setLineDash([]);
-      ctx.strokeStyle = c.ink; ctx.fillStyle = c.surface;
-      MOTORS.forEach(function (m) { shape(arm(m)); ctx.fill(); ctx.stroke(); });
-      shape(PLATE); ctx.fill(); ctx.stroke();
-      // receiver and antennas at the tail
-      shape(pts([[-33, -6], [-25, -6], [-25, 6], [-33, 6]])); ctx.fill(); ctx.stroke();
-      [-1, 1].forEach(function (sg) {
-        var a = pts([[-29, sg * 3]])[0], b = pts([[-44, sg * 13]])[0];
-        ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.lineWidth = 1.6 / k; ctx.stroke();
-        ctx.beginPath(); ctx.arc(b[0], b[1], 2.2, 0, 6.2832); ctx.fillStyle = c.ink; ctx.fill();
-      });
-      ctx.lineWidth = lw; ctx.fillStyle = c.surface;
-      // flight stack, then the camera at the nose with its lens and accent glint
-      shape(pts([[-11, -11], [11, -11], [11, 11], [-11, 11]])); ctx.fill(); ctx.stroke();
-      shape(pts([[23, -9], [34, -9], [34, 9], [23, 9]])); ctx.fill(); ctx.stroke();
-      ctx.beginPath(); ctx.ellipse(0, -35, 5.5, 2.4, 0, 0, 6.2832); ctx.fillStyle = c.ink; ctx.fill();
-      ctx.beginPath(); ctx.arc(2, -35.4, 1.3, 0, 6.2832); ctx.fillStyle = c.accent; ctx.fill();
-      // motors, spinning two-blade props (the hangar's blade profile), hubs
-      MOTORS.forEach(function (m, i) {
-        var p = pts([m])[0], th = spin * m[2] + i;
-        ctx.beginPath(); ctx.arc(p[0], p[1], 9, 0, 6.2832); ctx.fillStyle = c.surface; ctx.fill(); ctx.strokeStyle = c.ink; ctx.stroke();
+      ctx.moveTo(-arm, -arm); ctx.lineTo(arm, arm);
+      ctx.moveTo(arm, -arm); ctx.lineTo(-arm, arm);
+      ctx.stroke();
+      [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(function (q, i) {
+        var x = q[0] * arm, y = q[1] * arm, a = spin * (i % 2 ? -1 : 1);
+        ctx.strokeStyle = c.muted; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.stroke();
+        ctx.strokeStyle = c.accent; ctx.lineWidth = 1.5;
         ctx.beginPath();
-        [0, Math.PI].forEach(function (off) {
-          var co = Math.cos(th + off), si = Math.sin(th + off);
-          BLADE.forEach(function (q, j) {
-            var x = p[0] + (q[0] * co - q[1] * si) * R, y = p[1] + (q[0] * si + q[1] * co) * R;
-            if (j) ctx.lineTo(x, y); else ctx.moveTo(x, y);
-          });
-          ctx.closePath();
-        });
-        ctx.globalAlpha = 0.82; ctx.fillStyle = c.ink; ctx.fill(); ctx.globalAlpha = 1;
-        ctx.beginPath(); ctx.arc(p[0], p[1], 3.2, 0, 6.2832); ctx.fillStyle = c.surface; ctx.fill(); ctx.stroke();
+        ctx.moveTo(x - Math.cos(a) * r, y - Math.sin(a) * r);
+        ctx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r);
+        ctx.stroke();
       });
+      ctx.fillStyle = c.ink;
+      ctx.fillRect(-5 * s, -9 * s, 10 * s, 18 * s);
+      ctx.fillStyle = c.accent;
+      ctx.fillRect(-2 * s, -9 * s, 4 * s, 4 * s);
       ctx.restore();
     }
-
-    // One physics step toward the goal: a spring with a little overshoot reads as a real quad correcting itself.
-    function step(goal) {
+    function frame(t) {
+      raf = 0;
+      if (!visible) return;
+      var c = colors();
+      var goal = (target && t - lastMove < 4000) ? target : auto(t - t0);
+      // Spring toward the goal: a little overshoot reads as a real quad correcting itself.
       vel.x += (goal.x - pos.x) * 0.012; vel.y += (goal.y - pos.y) * 0.012;
       vel.x *= 0.9; vel.y *= 0.9;
       pos.x += vel.x; pos.y += vel.y;
@@ -1043,14 +982,6 @@
       var last = trail[trail.length - 1];
       if (!last || Math.hypot(pos.x - last.x, pos.y - last.y) > 7) trail.push({ x: pos.x, y: pos.y });
       if (trail.length > 90) trail.shift();
-    }
-    function frame(t) {
-      raf = 0;
-      if (!visible) return;
-      var c = colors(), follow = !!(target && t - lastMove < 4000);
-      if (!reduceMotion) step(follow ? target : auto(t - t0));
-      var m = follow ? 'Follow' : 'Loiter';
-      if (m !== mode) modeEl.textContent = mode = m;
 
       ctx.clearRect(0, 0, W, H);
       ctx.lineWidth = 1.2;
@@ -1062,24 +993,23 @@
       }
       ctx.setLineDash([]);
       ctx.globalAlpha = 1;
-      drawQuad(c);
+      drawQuad(c, W > 820 ? 1.5 : 1.1);
       if (!reduceMotion) raf = requestAnimationFrame(frame);
     }
     function kick() { if (!raf && visible) raf = requestAnimationFrame(frame); }
 
     hero.addEventListener('pointermove', function (e) {
-      if (e.pointerType === 'touch' || reduceMotion) return;
+      if (e.pointerType === 'touch') return;
       var b = hero.getBoundingClientRect();
       target = { x: e.clientX - b.left, y: e.clientY - b.top };
       lastMove = performance.now();
     });
     hero.addEventListener('pointerleave', function () { target = null; });
-    // Re-measure the airspace whenever the hero's layout changes (resize, web fonts arriving).
-    if ('ResizeObserver' in window) { var ro = new ResizeObserver(function () { size(); kick(); }); ro.observe(hero); ro.observe(airEl); }
-    else addEventListener('resize', function () { size(); kick(); });
+    addEventListener('resize', function () { size(); kick(); });
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (en) { visible = en[0].isIntersecting; kick(); }).observe(hero);
     }
+    if (reduceMotion || matchMedia('(hover: none)').matches) $('hero-hint').hidden = true;
     size();
     kick();
   })();
