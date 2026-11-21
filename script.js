@@ -402,6 +402,12 @@
     fig.addEventListener('mouseleave', function () { if (landed) setSpin(set, false); });
   })();
 
+  /* ── Flight log figures: their CSS loops run only while the plate is on screen ── */
+  document.querySelectorAll('.log-fig').forEach(function (fig) {
+    if (!('IntersectionObserver' in window)) { fig.classList.add('live'); return; }
+    new IntersectionObserver(function (en) { fig.classList.toggle('live', en[en.length - 1].isIntersecting); }).observe(fig);
+  });
+
   /* ── Reveal on scroll ── */
   var reveals = document.querySelectorAll('.reveal');
   if ('IntersectionObserver' in window && !reduceMotion) {
