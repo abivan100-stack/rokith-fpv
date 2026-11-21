@@ -845,7 +845,7 @@ html:not(.js) .mission-art svg { display: none; }
   .log-entry::before { margin-top: 3px; }
   .log-entry:last-child::after { height: 44px; }
   .log-meta { flex-direction: row; flex-wrap: wrap; gap: 0; padding-top: 0; }
-  .log-meta > span + span::before { content: " a0· a0"; color: var(--muted); }
+  .log-meta > span + span::before { content: "\00a0·\00a0"; color: var(--muted); }
   .log-body { grid-column: 2; grid-row: 2; margin-top: 12px; }
   .log-fig { grid-column: 3; grid-row: 1 / span 2; }
 }
