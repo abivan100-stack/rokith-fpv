@@ -847,39 +847,68 @@
     });
   })();
 
-  /* ── Flight rail + active nav ── */
+  /* ── Flight rail, current section and the small-screen menu ──
+     Waypoints sit at equal steps down the rail (hero first, as the start mark); the marker flies from one waypoint to
+     the next as that section scrolls past, so a long section takes longer to cross but never squeezes the others. */
   var sections = Array.prototype.slice.call(document.querySelectorAll('[data-wp]'));
-  var rail = document.querySelector('.rail'), marker = $('rail-marker'), label = $('rail-label');
-  var navLinks = document.querySelectorAll('.nav a');
-  var dots = sections.map(function () {
+  var rail = document.querySelector('.rail'), marker = $('rail-marker'), here = $('top-here');
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav a'));
+  var wps = sections.map(function (s) {
     var d = document.createElement('div');
-    d.className = 'rail-dot';
+    d.className = 'rail-wp' + (s.dataset.wp ? '' : ' home');
+    d.innerHTML = '<i></i>' + s.dataset.wp;
     rail.insertBefore(d, marker);
     return d;
   });
-  var stops = [];
+  var PAD = 40, current = -1;
+  function railY(i) { return PAD + i / (sections.length - 1) * (rail.clientHeight - 2 * PAD); }
   function measure() {
-    var max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
-    stops = sections.map(function (s) { return Math.min(1, s.offsetTop / max); });
-    var h = rail.clientHeight - 48;
-    dots.forEach(function (d, i) { d.style.top = (24 + stops[i] * h) + 'px'; });
+    wps.forEach(function (d, i) { d.style.top = railY(i) + 'px'; });
     onScroll();
   }
   function onScroll() {
-    var max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
-    var p = Math.min(1, Math.max(0, scrollY / max));
-    marker.style.top = (24 + p * (rail.clientHeight - 48)) + 'px';
-    var probe = scrollY + innerHeight * 0.35, active = 0;
+    var probe = scrollY + innerHeight * 0.35, active = 0, n = sections.length;
     sections.forEach(function (s, i) { if (s.offsetTop <= probe) active = i; });
-    if (p > 0.995) active = sections.length - 1;
-    label.textContent = sections[active].dataset.wp;
-    dots.forEach(function (d, i) { d.classList.toggle('passed', i <= active); });
-    navLinks.forEach(function (a) { a.classList.toggle('on', a.getAttribute('href') === '#' + sections[active].id); });
+    var atEnd = scrollY >= document.documentElement.scrollHeight - innerHeight - 2;
+    if (atEnd) active = n - 1;
+    var pos = active;
+    if (active < n - 1) {
+      var t0 = sections[active].offsetTop, t1 = sections[active + 1].offsetTop;
+      pos += Math.min(1, Math.max(0, (probe - t0) / Math.max(1, t1 - t0)));
+    }
+    if (rail.clientHeight) marker.style.top = (PAD + pos / (n - 1) * (rail.clientHeight - 2 * PAD)) + 'px';
+    if (active === current) return;
+    current = active;
+    wps.forEach(function (d, i) { d.classList.toggle('passed', i < active); d.classList.toggle('on', i === active); });
+    var id = sections[active].id, name = '';
+    navLinks.forEach(function (a) {
+      var on = a.getAttribute('href') === '#' + id;
+      if (on) { a.setAttribute('aria-current', 'location'); name = a.innerHTML; } else a.removeAttribute('aria-current');
+    });
+    here.innerHTML = name;   // small screens: the current section beside the menu button
   }
   addEventListener('scroll', onScroll, { passive: true });
   addEventListener('resize', measure);
   addEventListener('load', measure);
   measure();
+
+  (function menu() {
+    var btn = $('menu-btn'), nav = $('site-nav'), top = document.querySelector('.top');
+    var small = matchMedia('(max-width: 820px)');
+    function set(open, focusBtn) {
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      nav.classList.toggle('open', open);
+      if (!open && focusBtn) btn.focus();
+    }
+    btn.addEventListener('click', function () { set(btn.getAttribute('aria-expanded') !== 'true'); });
+    nav.addEventListener('click', function (e) { if (e.target.closest('a') && small.matches) set(false); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && btn.getAttribute('aria-expanded') === 'true') set(false, top.contains(document.activeElement));
+    });
+    top.addEventListener('focusout', function (e) { if (e.relatedTarget && !top.contains(e.relatedTarget)) set(false); });
+    document.addEventListener('pointerdown', function (e) { if (!top.contains(e.target)) set(false); });
+    small.addEventListener('change', function () { set(false); });
+  })();
 
   /* ── Hero: a line-art quad that follows the cursor and leaves a flight trail ── */
   (function () {
