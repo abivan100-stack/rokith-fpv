@@ -709,34 +709,48 @@ html:not(.js) .mission-art svg { display: none; }
 .lb-span b { position: absolute; left: 50%; top: -6px; transform: translateX(-50%); padding: 0 12px; background: var(--bg); line-height: 11px; font-weight: 500; color: var(--ink); white-space: nowrap; }
 
 .lb-body { display: grid; gap: 28px; padding-top: 4px; }
-.lb-flight h3 { margin-bottom: 4px; }
+.lb-flight h3 { margin-bottom: 0; }
 
-/* formation: glyph centres sit on a grid of --dx by --dy steps from the lead (x, y set per wingman) */
-.lb-formation { --dx: clamp(64px, 6vw, 84px); --dy: 84px; --top: 64px; --g: 26px; position: relative; height: calc(var(--top) + 2 * var(--dy) + 56px); }
-.lb-lines { position: absolute; left: calc(50% - 2 * var(--dx)); top: var(--top); width: calc(4 * var(--dx)); height: calc(2 * var(--dy)); overflow: visible;
-  fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 5; opacity: .55; transition: opacity .3s, stroke .3s; }
-.lb-lines path { vector-effect: non-scaling-stroke; }   /* the 4 x 2 viewBox stretches to the step sizes; strokes and dashes stay 1 px */
+/* formation chart: a fixed 653 x 330 px plate. Glyph centres sit --dx across and --dy back from the lead (x, y per wingman);
+   the SVG shares that origin, so every link ends exactly on a ring's outer edge (lead r 24, wingmen r 18). */
+.lb-formation { --dx: 72px; --dy: 84px; --ox: 342px; --oy: 92px; position: relative; width: 653px; height: 330px; margin: 6px auto 0; }
+.lb-chart { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke-width: 1; }
+.lb-arc { stroke: var(--muted); stroke-dasharray: 1 5; opacity: .7; }   /* station arc through 02 and 03 */
+.lb-range { stroke: var(--accent); stroke-dasharray: 2 4.283; opacity: .7; transform-box: fill-box; transform-origin: center; }   /* range ring: 32 dashes */
+.lb-hdg path { stroke: var(--muted); stroke-linecap: round; stroke-linejoin: round; }
+.lb-hdg text { fill: var(--muted); stroke: none; font: 500 10px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; text-anchor: end; }
+.lb-links { stroke: var(--muted); }
+.lb-draw { stroke: var(--accent); stroke-width: 1.5; }
+.lb-draw path { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset .35s ease-out; }
 .lb-defs { position: absolute; }
-.lb-skills li { position: absolute; left: calc(50% + var(--x, 0) * var(--dx)); top: calc(var(--top) + var(--y, 0) * var(--dy)); width: 0; height: 0;
-  transition: transform .6s cubic-bezier(.3, .7, .2, 1) calc(var(--y, 0) * 90ms); }
+.lb-skills { counter-reset: lb 1; }
+.lb-skills li { --r: 18px; position: absolute; left: calc(var(--ox) + var(--x, 0) * var(--dx)); top: calc(var(--oy) + var(--y, 0) * var(--dy)); width: 0; height: 0; counter-increment: lb; }
 .lb-l1 { --x: -1; --y: 1; } .lb-r1 { --x: 1; --y: 1; } .lb-l2 { --x: -2; --y: 2; } .lb-r2 { --x: 2; --y: 2; } .lb-slot { --y: 2; }
-.lb-skills svg { position: absolute; left: calc(var(--g) / -2); top: calc(var(--g) / -2); width: var(--g); height: var(--g); padding: 1px; border-radius: 50%; background: var(--bg);
-  fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; transition: stroke .3s; }
-.lb-skills span { position: absolute; top: 0; width: max-content; max-width: 10.5em; font-size: 15px; line-height: 1.35; transform: translateY(-50%); }
-.lb-l1 span, .lb-l2 span { right: calc(var(--g) / 2 + 12px); text-align: right; }
-.lb-r1 span, .lb-r2 span { left: calc(var(--g) / 2 + 12px); }
-.lb-slot span { top: calc(var(--g) / 2 + 10px); left: 0; transform: translateX(-50%); text-align: center; }
-.lb-lead { --g: 40px; }
-.lb-lead svg { stroke: var(--accent); stroke-width: 1.3; }
+.lb-skills svg { position: absolute; left: calc(-1 * var(--r)); top: calc(-1 * var(--r)); width: calc(2 * var(--r)); height: calc(2 * var(--r)); padding: 6px; border: 1px solid var(--ink); border-radius: 50%; background: var(--surface);
+  fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform .45s cubic-bezier(.3, .7, .2, 1), border-color .3s, stroke .3s; transition-delay: calc(var(--y, 0) * .28s); }
+/* label: slot number over the skill, one line each, 12 px off the ring, mirrored left and right */
+.lb-skills span { position: absolute; top: 0; width: max-content; font-size: 15px; line-height: 20px; white-space: nowrap; transform: translateY(-50%); }
+.lb-skills span::before { content: counter(lb, decimal-leading-zero) / ""; display: block; font: 500 10px/14px var(--mono); letter-spacing: .12em; text-transform: uppercase; font-variant-numeric: tabular-nums; color: var(--muted); transition: color .3s; transition-delay: calc(var(--y, 0) * .28s); }
+.lb-l1 span, .lb-l2 span { right: calc(var(--r) + 12px); text-align: right; }
+.lb-r1 span, .lb-r2 span { left: calc(var(--r) + 12px); }
+.lb-slot span { top: calc(var(--r) + 10px); left: 0; transform: translateX(-50%); text-align: center; }
+.lb-skills .lb-lead { --r: 24px; counter-increment: none; }
+.lb-skills .lb-lead svg { padding: 8px; border: 1.5px solid var(--accent); stroke: var(--accent); stroke-width: 1.25; }
 .lb-lead circle { stroke-dasharray: 4.2 1.4; transform-box: fill-box; transform-origin: center; }   /* segmented so a spin reads */
-.lb-lead span { top: auto; bottom: calc(var(--g) / 2 + 10px); left: 0; transform: translateX(-50%); text-align: center; font-size: 17px; font-weight: 700; }
-.lead-band:is(:hover, :focus-within) .lb-skills li { transform: translateY(-6px); }
-.lead-band:is(:hover, :focus-within) .lb-lines { stroke: var(--accent); opacity: .8; }
+.lb-skills .lb-lead span { top: auto; bottom: calc(var(--r) + 14px); left: 0; transform: translateX(-50%); text-align: center; font-size: 17px; line-height: 22px; font-weight: 700; }
+.lb-skills .lb-lead span::before { content: "Lead" / ""; color: var(--accent-ink); }
+/* hover or focus inside the band: the links draw out from the lead and each rank answers as its link arrives */
+.lead-band:is(:hover, :focus-within) .lb-draw path { stroke-dashoffset: 0; }
+.lead-band:is(:hover, :focus-within) .lb-draw .lb-k2 { transition-delay: .3s; }
+.lead-band:is(:hover, :focus-within) .lb-draw .lb-ks { transition-duration: .6s; }
+.lead-band:is(:hover, :focus-within) .lb-skills svg { border-color: var(--accent); transform: scale(1.1); }
+.lead-band:is(:hover, :focus-within) .lb-skills span::before { color: var(--accent-ink); }
 .lead-band:is(:hover, :focus-within) .lb-lead circle { animation: lb-prop .5s linear infinite; }
+.lead-band:is(:hover, :focus-within) .lb-range { animation: lb-prop 14s linear infinite; }
 @keyframes lb-prop { to { transform: rotate(360deg); } }
 
 /* sorties: the two "Used in" links as cards; the link stretches over the whole card */
-.lb-sorties { display: grid; gap: 12px; align-content: center; }
+.lb-sorties { display: grid; gap: 12px; align-content: start; }
 .lb-sorties .mono-label { font-size: 11px; }
 .lb-sortie { position: relative; padding: 16px 18px 18px; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--ink); transition: transform .2s, border-color .2s; }
 .lb-sortie p { margin-bottom: 8px; font: 500 11px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); transition: color .2s; }
@@ -749,12 +763,30 @@ html:not(.js) .mission-art svg { display: none; }
 .lb-sortie:is(:hover, :has(a:focus-visible)) p, .lb-sortie:is(:hover, :has(a:focus-visible)) a { color: var(--accent-ink); }
 .lb-sortie:is(:hover, :has(a:focus-visible)) a { text-decoration-color: currentColor; }
 
-@media (min-width: 760px) and (max-width: 1279px) {
+@media (min-width: 900px) and (max-width: 1279px) {
   .lb-sorties { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; }
   .lb-sorties .mono-label { grid-column: 1 / -1; }
 }
+/* wide: chart on the left edge, the two cards share its height */
 @media (min-width: 1280px) {
-  .lb-body { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 40px; }
+  .lb-body { grid-template-columns: auto minmax(0, 1fr); gap: 48px; }
+  .lb-formation { margin-inline: 0; }
+  .lb-sorties { grid-template-rows: auto 1fr 1fr; }
+  .lb-sortie { display: flex; flex-direction: column; justify-content: center; }
+}
+/* below 900 the chart does not fit: a vertical trail behind the lead, each link running ring to ring */
+@media (max-width: 899px) {
+  .lb-formation { width: auto; height: auto; margin: 18px 0 0; }
+  .lb-chart { display: none; }
+  .lb-skills { display: grid; gap: 16px; }
+  .lb-skills li, .lb-skills .lb-lead { --r: 18px; position: relative; left: auto; top: auto; width: auto; height: auto; display: flex; align-items: flex-start; gap: 14px; }
+  .lb-skills li:not(:last-child)::after { content: ""; position: absolute; left: 17.5px; top: 36px; bottom: -16px; width: 1px; background: var(--muted); }
+  .lb-skills svg, .lb-skills .lb-lead svg { position: relative; left: auto; top: auto; flex: none; padding: 6px; stroke-width: 1.6; }
+  .lb-skills span, .lb-skills .lb-lead span { position: static; width: auto; margin-top: 1px; transform: none; text-align: left; white-space: normal; line-height: 20px; }
+  .lead-band:is(:hover, :focus-within) .lb-skills svg { transform: none; }
+}
+@media (min-width: 760px) and (max-width: 899px) {
+  .lb-body { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; }
 }
 /* below 1100 the stages wrap, so the bracket keeps only its ends and its label */
 @media (max-width: 1099px) {
@@ -780,21 +812,11 @@ html:not(.js) .mission-art svg { display: none; }
   .stage:nth-child(n+2) { border-top: 1px solid var(--line); }
   .stage::before { content: ""; position: absolute; left: -32px; top: 32px; width: 7px; height: 7px; border: 1px solid var(--muted); border-radius: 50%; background: var(--bg); transition: background .3s, border-color .3s; }
   .stage.in::before, .stage:is(:hover, :focus-within)::before { background: var(--accent); border-color: var(--accent); }
-  /* lead band: bracket becomes a label row, the formation a vertical trail behind the lead */
+  /* lead band: bracket becomes a label row */
   .lead-band { --lb-pad: 20px; }
   .lb-span { display: flex; height: auto; padding: 14px var(--lb-pad) 12px; }
   .lb-span span { display: none; }
   .lb-span b { position: static; transform: none; padding: 0; }
-  .lb-formation { height: auto; margin-top: 16px; }
-  .lb-lines { display: none; }
-  .lb-skills { position: relative; display: grid; gap: 14px; }
-  .lb-skills::before { content: ""; position: absolute; left: 13.5px; top: 20px; bottom: 12px; border-left: 1px dashed var(--muted); opacity: .7; }
-  .lb-skills li { position: relative; left: auto; top: auto; width: auto; height: auto; display: flex; align-items: center; gap: 14px; transition: none; }
-  .lb-skills li:nth-child(n+2) { padding-left: 2px; }
-  .lb-skills svg { position: relative; left: auto; top: auto; flex: none; }
-  .lb-skills span, .lb-lead span, .lb-slot span { position: static; max-width: none; transform: none; text-align: left; }
-  .lb-lead { --g: 28px; }
-  .lead-band:is(:hover, :focus-within) .lb-skills li { transform: none; }
 }
 
 /* ── Contact ── */
@@ -1078,9 +1100,9 @@ html:not(.js) .mission-art svg { display: none; }
   .project.feature:is(:hover, :focus-within) .mission-art .drone { transform: none; }
   .pipe-track::before { transform: none; transition: none; }
   .pt-node i, .stage::before, .stage-skills li::before, .proof a { transition: none; }
-  .lb-skills li, .lb-skills svg, .lb-lines, .lb-sortie, .lb-sortie * { transition: none; }
-  .lead-band:is(:hover, :focus-within) .lb-skills li, .lb-sortie:is(:hover, :has(a:focus-visible)) { transform: none; }
-  .lead-band:is(:hover, :focus-within) .lb-lead circle { animation: none; }
+  .lb-skills svg, .lb-skills span::before, .lb-draw path, .lb-sortie, .lb-sortie * { transition: none; }
+  .lead-band:is(:hover, :focus-within) .lb-skills svg, .lb-sortie:is(:hover, :has(a:focus-visible)) { transform: none; }
+  .lead-band:is(:hover, :focus-within) :is(.lb-lead circle, .lb-range) { animation: none; }
   .pt-node i { background: var(--accent); border-color: var(--accent); }
   .stage::before { background: var(--accent); border-color: var(--accent); }
   .btn, .copy, .brief, .contact .arr { transition: none; }

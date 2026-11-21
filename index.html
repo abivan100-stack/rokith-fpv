@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
-  <link rel="stylesheet" href="styles.css?v=20261121g">
+  <link rel="stylesheet" href="styles.css?v=20261121h">
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -508,7 +508,14 @@
           <div class="lb-flight">
             <h3 class="sec-no">All the way through: lead</h3>
             <div class="lb-formation">
-              <svg class="lb-lines" viewBox="0 0 4 2" preserveAspectRatio="none" aria-hidden="true"><path d="M2 0L0 2M2 0l2 2M2 0v2"/></svg>
+              <!-- chart drawn in px around the lead's centre (0 0): wingmen step 72 across, 84 back; links run ring edge to ring edge -->
+              <svg class="lb-chart" viewBox="-342 -92 653 330" aria-hidden="true">
+                <path class="lb-arc" d="M-72 84A110.634 110.634 0 0 0 72 84"/>
+                <circle class="lb-range" r="32"/>
+                <g class="lb-hdg"><path d="M300.5-48v-30m-4.5 7 4.5-8 4.5 8"/><path d="M296-48h9"/><text x="288" y="-58">Direction of flight</text></g>
+                <g class="lb-links"><path d="M-15.619 18.222-60.286 70.333"/><path d="M15.619 18.222 60.286 70.333"/><path d="M-83.714 97.667-132.286 154.333"/><path d="M83.714 97.667 132.286 154.333"/><path d="M0 24v126"/></g>
+                <g class="lb-links lb-draw"><path pathLength="1" d="M-15.619 18.222-60.286 70.333"/><path pathLength="1" d="M15.619 18.222 60.286 70.333"/><path pathLength="1" class="lb-k2" d="M-83.714 97.667-132.286 154.333"/><path pathLength="1" class="lb-k2" d="M83.714 97.667 132.286 154.333"/><path pathLength="1" class="lb-ks" d="M0 24v126"/></g>
+              </svg>
               <svg width="0" height="0" class="lb-defs" aria-hidden="true"><symbol id="lb-quad" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/><circle cx="5.5" cy="5.5" r="3"/><circle cx="18.5" cy="5.5" r="3"/><circle cx="5.5" cy="18.5" r="3"/><circle cx="18.5" cy="18.5" r="3"/></symbol></svg>
               <ul class="lb-skills">
                 <li class="lb-lead"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/><circle cx="5.5" cy="5.5" r="3"/><circle cx="18.5" cy="5.5" r="3"/><circle cx="5.5" cy="18.5" r="3"/><circle cx="18.5" cy="18.5" r="3"/></svg><span>Project leadership</span></li>
@@ -687,6 +694,6 @@
     <p>Chennai, India</p>
   </footer>
 
-  <script src="script.js?v=20261121g"></script>
+  <script src="script.js?v=20261121h"></script>
 </body>
 </html>
