@@ -4,99 +4,99 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Rokith Kumaar – CV</title>
-  <meta name="description" content="One-page CV of Rokith Kumaar, FPV pilot and UAV and robotics builder from Chennai, India.">
+  <meta name="description" content="One-page CV of Rokith Kumaar, Grade 12 student, UAV and robotics builder from Chennai, India.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
   <style>
-    /* Edit content below, then regenerate assets/Rokith-Kumaar-CV.pdf (Chrome: Print > Save as PDF, A4, no headers/footers). */
-    @page { size: A4; margin: 14mm; }
-    :root { --ink: #111; --muted: #444; --rule: #c9c9c9; --accent: #f04a00; --accent-text: #b83800; }
+    /* Edit content below, then regenerate assets/Rokith-Kumaar-CV.pdf with headless Chrome:
+       chrome --headless=new --no-pdf-header-footer --print-to-pdf="<absolute path>\assets\Rokith-Kumaar-CV.pdf" http://localhost:<port>/cv.html
+       It must stay one A4 page. */
+    @page { size: A4; margin: 0; }
+    :root { --ink: #161616; --muted: #5a5a5a; --rule: #bdbdbd; --hair: #e2e2e2; --accent: #c23b00; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { background: #e6e6e6; }
     body {
-      font-family: "Archivo", Arial, sans-serif;
-      font-size: 9.5pt; line-height: 1.3; color: var(--ink); font-stretch: 94%;
+      font-family: "Archivo", Arial, sans-serif; font-stretch: 96%;
+      font-size: 10pt; line-height: 1.36; color: var(--ink);
+      font-variant-numeric: tabular-nums lining-nums;
       background: #fff;
-      width: 210mm; min-height: 297mm; margin: 0 auto; padding: 14mm;
+      width: 210mm; min-height: 297mm; margin: 0 auto; padding: 15mm 17mm 13mm;
       -webkit-print-color-adjust: exact; print-color-adjust: exact;
     }
-    @media print { html { background: none; } body { width: auto; min-height: 0; padding: 0; margin: 0; } }
+    @media print { html { background: none; } body { margin: 0; min-height: 0; } }
     a { color: inherit; text-decoration: none; }
+    b { font-weight: 600; }
 
-    header { border-bottom: 2.5pt solid var(--accent); padding-bottom: 2.6mm; margin-bottom: 2.6mm; }
-    h1 { font-size: 24pt; font-weight: 800; font-stretch: 112%; letter-spacing: -0.01em; line-height: 1; text-transform: uppercase; }
-    .title { font-family: "IBM Plex Mono", monospace; font-size: 10pt; font-weight: 500; color: var(--accent-text); margin-top: 1.6mm; }
-    .contact { font-size: 9.5pt; color: var(--muted); margin-top: 1.4mm; }
-    .contact span + span::before { content: " · "; color: var(--rule); }
+    /* Header */
+    header { padding-bottom: 3.4mm; border-bottom: 1.2pt solid var(--accent); }
+    h1 { font-size: 23pt; font-weight: 700; font-stretch: 104%; letter-spacing: -0.01em; line-height: 1.05; }
+    .standing { font-size: 11pt; font-weight: 500; margin-top: 1.6mm; }
+    .contact { font-size: 9.5pt; color: var(--muted); margin-top: 1mm; }
+    .sep { color: var(--rule); padding: 0 1.6mm; }
+    td .sep { color: var(--muted); padding: 0 1.2mm; }
 
-    section { margin-top: 2.6mm; }
+    /* Sections */
+    section { margin-top: 4.2mm; }
     h2 {
-      font-family: "IBM Plex Mono", monospace; font-size: 9.5pt; font-weight: 500;
-      letter-spacing: 0.02em; text-transform: uppercase; color: var(--ink);
-      border-bottom: 0.6pt solid var(--rule); padding-bottom: 0.5mm; margin-bottom: 1.2mm;
+      font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--accent); padding-bottom: 1mm; margin-bottom: 2mm; border-bottom: 0.5pt solid var(--rule);
     }
-    h2::before { content: ""; display: inline-block; width: 2.2mm; height: 2.2mm; background: var(--accent); margin-right: 2mm; vertical-align: 0.05em; }
-    h3 { font-size: 10pt; font-weight: 700; }
-    h3 .sub { font-weight: 400; color: var(--muted); }
-    .item + .item { margin-top: 1.4mm; }
-    .row { display: flex; justify-content: space-between; gap: 4mm; align-items: baseline; }
-    .date { font-family: "IBM Plex Mono", monospace; font-size: 9.5pt; color: var(--muted); white-space: nowrap; }
-    ul { list-style: none; margin-top: 0.6mm; }
-    /* Bullets are inline, not absolutely positioned: positioned boxes are written last in the PDF,
-       which scrambles the reading order for CV-screening software. */
-    li { padding-left: 3.6mm; }
-    li + li { margin-top: 0.3mm; }
-    li::before { content: ""; display: inline-block; width: 1.4mm; height: 0.6mm; background: var(--ink); margin: 0 1.8mm 0 -3.2mm; vertical-align: 0.28em; }
-    .highlights li strong { font-weight: 700; }
+    .entry + .entry { margin-top: 2.6mm; }
+    .head { display: flex; justify-content: space-between; align-items: baseline; gap: 6mm; }
+    h3 { font-size: 10.5pt; font-weight: 700; }
+    .role { font-weight: 400; }
+    .when { color: var(--muted); white-space: nowrap; }
+    .note { color: var(--muted); }
+    ul { margin-top: 0.8mm; padding-left: 4.2mm; }
+    li + li { margin-top: 0.5mm; }
+    li::marker { color: var(--muted); font-size: 0.85em; }
 
-    .results { font-size: 9.5pt; }
-    .result { display: grid; grid-template-columns: 17mm 1fr auto; gap: 3mm; padding: 0.2mm 0; border-bottom: 0.4pt dotted var(--rule); }
-    .result:last-child { border-bottom: 0; }
-    .result .date { font-size: 9.5pt; }
-    .result .prize { font-family: "IBM Plex Mono", monospace; text-align: right; white-space: nowrap; }
-    .result b { font-weight: 600; }
+    /* Results table */
+    .tally { margin-bottom: 1.6mm; }
+    table { width: 100%; border-collapse: collapse; font-size: 9.5pt; line-height: 1.3; }
+    td { padding: 0.45mm 0; border-bottom: 0.4pt solid var(--hair); vertical-align: baseline; }
+    tr:last-child td { border-bottom: 0; }
+    td.d { width: 18mm; color: var(--muted); white-space: nowrap; }
+    td.p { text-align: right; white-space: nowrap; padding-left: 4mm; }
 
-    .skills dt { font-weight: 700; display: inline; }
-    .skills dd { display: inline; }
-    .skills div + div { margin-top: 0.5mm; }
+    /* Skills */
+    .skills { display: grid; grid-template-columns: 41mm 1fr; row-gap: 1mm; }
+    .skills dt { font-weight: 600; }
+    .kit { margin-top: 1.8mm; padding-top: 1.4mm; border-top: 0.4pt solid var(--hair); font-size: 9.5pt; color: var(--muted); }
+    .kit b { color: var(--ink); }
   </style>
 </head>
 <body>
   <header>
     <h1>Rokith Kumaar</h1>
-    <p class="title">FPV Pilot · UAV &amp; Robotics Builder · rokith.fpv</p>
-    <p class="contact">
-      <span><a href="mailto:rokithkumaar742@gmail.com">rokithkumaar742@gmail.com</a></span><span><a href="https://www.linkedin.com/in/rokith-kumaar-42295a380/">linkedin.com/in/rokith-kumaar-42295a380</a></span><span><a href="https://www.instagram.com/rokith_fpv/">instagram.com/rokith_fpv</a></span><span>Chennai, India</span>
-    </p>
+    <p class="standing">Grade 12<span class="sep">·</span>Velammal Vidhyalaya, Vanagaram<span class="sep">·</span>Chennai, India</p>
+    <p class="contact"><a href="mailto:rokithkumaar742@gmail.com">rokithkumaar742@gmail.com</a><span class="sep">·</span><a href="https://www.linkedin.com/in/rokith-kumaar-42295a380/">linkedin.com/in/rokith-kumaar-42295a380</a><span class="sep">·</span><a href="https://www.instagram.com/rokith_fpv/">Instagram @rokith_fpv</a></p>
   </header>
 
   <section>
-    <h2>Profile</h2>
-    <p>UAV pilot and robotics builder with three years of hands-on flying across freestyle, racing, line of sight and mapping. Learned on real hardware without a simulator, and builds and tunes every aircraft he flies. Built Agrifly, a solo agricultural drone system that won silver at an international championship and secured a US$5,000 investment. Applying for undergraduate admission.</p>
+    <h2>Education</h2>
+    <div class="head"><h3>Velammal Vidhyalaya, Vanagaram, Chennai <span class="role">· Grade 12</span></h3><span class="when">Applying for undergraduate admission</span></div>
   </section>
 
-  <section class="highlights">
-    <h2>Highlights</h2>
-    <ul>
-      <li><strong>14 podiums from 11 competitions</strong> (2024–2026): 7 first, 3 second, 4 third places</li>
-      <li><strong>₹7,13,000 + US$1,500</strong> in prize money; <strong>US$5,000 investment</strong> secured for Agrifly</li>
-      <li><strong>5 aircraft</strong> from 3-inch to 10-inch, all built and tuned by him</li>
-    </ul>
+  <section>
+    <h2>Profile</h2>
+    <p>UAV and robotics builder with three years of FPV flying across freestyle, racing, line of sight and mapping. Learned on real hardware without a simulator, and builds and tunes every aircraft he flies.</p>
   </section>
 
   <section>
     <h2>Projects</h2>
-    <div class="item">
-      <h3>Agrifly <span class="sub">· AI-powered, IoT-integrated agricultural drone system (solo project)</span></h3>
+    <div class="entry">
+      <div class="head"><h3>Agrifly <span class="role">· AI-powered, IoT-integrated agricultural drone system</span></h3><span class="when">Solo project</span></div>
       <ul>
-        <li>10-inch UAV for pesticide spraying and crop monitoring; multispectral imaging, NDVI analysis and environmental sensors assess crop health and detect plant stress, with AI and real-time data analytics.</li>
-        <li>ESP32 with MQ-135 gas, MPU6050 IMU, BME280 temperature/humidity/pressure, BH1750 light, soil-moisture and NEO-6M GPS sensors; IoT cloud telemetry to a live web dashboard: <a href="https://agrifly-live.vercel.app/">agrifly-live.vercel.app</a></li>
-        <li>Silver, Robowunder International Robotics Championship, Malaysia (Jan 2026): US$1,500 prize and US$5,000 investment.</li>
+        <li>10-inch UAV for pesticide spraying and crop monitoring; assesses crop health and detects plant stress with multispectral imaging, NDVI analysis and environmental sensors.</li>
+        <li>ESP32 with MQ-135 gas, MPU6050 IMU, BME280, BH1750 light, soil-moisture and NEO-6M GPS sensors.</li>
+        <li>IoT cloud telemetry, AI and real-time analytics on a live dashboard: <a href="https://agrifly-live.vercel.app/">agrifly-live.vercel.app</a>.</li>
+        <li>Silver medal, US$1,500 prize and US$5,000 investment at Robowunder, Malaysia (Jan 2026).</li>
       </ul>
     </div>
-    <div class="item">
-      <h3>CleanSight <span class="sub">· autonomous aerial waste detection</span></h3>
+    <div class="entry">
+      <div class="head"><h3>CleanSight <span class="role">· Autonomous aerial waste detection</span></h3></div>
       <ul>
         <li>Detects waste autonomously from a drone's view; made for the Greater Chennai Corporation.</li>
       </ul>
@@ -105,45 +105,42 @@
 
   <section>
     <h2>Experience</h2>
-    <div class="item">
-      <div class="row"><h3>Electronics &amp; Integration Intern <span class="sub">· BluJ Aerospace</span></h3><span class="date">May 2024 (1 month)</span></div>
+    <div class="entry">
+      <div class="head"><h3>BluJ Aerospace <span class="role">· Electronics and Integration Intern</span></h3><span class="when">May 2024 · 1 month</span></div>
       <ul>
-        <li>Developed a hardware-integration model based on the CAN protocol to connect all the electronic components of a passenger VTOL aircraft.</li>
+        <li>Developed a CAN-protocol hardware-integration model for all electronic components of a passenger VTOL aircraft.</li>
       </ul>
     </div>
   </section>
 
   <section>
     <h2>Competition results</h2>
-    <div class="results">
-      <div class="result"><span class="date">Oct 2026</span><span>Vadiva Tech Fest · <b>1st</b> Drone race, Robosoccer, RoboRetrieve; <b>3rd</b> RoboRace</span><span class="prize">₹5,00,000</span></div>
-      <div class="result"><span class="date">Jul 2026</span><span>Technoxian ZRC, South Zone zonals · <b>2nd</b> Drone rescue</span><span class="prize">₹15,000</span></div>
-      <div class="result"><span class="date">May 2026</span><span>InnovateX 2026, Presidency University · <b>1st</b> Drone race</span><span class="prize">₹25,000</span></div>
-      <div class="result"><span class="date">Feb 2026</span><span>Robotica '26, VIT Chennai · <b>1st</b> Drone race</span><span class="prize">₹15,000</span></div>
-      <div class="result"><span class="date">Jan 2026</span><span>Robowunder International Robotics Championship, Malaysia · <b>2nd</b> (Silver) Agrifly</span><span class="prize">US$1,500</span></div>
-      <div class="result"><span class="date">2024</span><span>WRC 2024, Delhi · <b>2nd</b> Robosoccer</span><span class="prize">₹50,000</span></div>
-      <div class="result"><span class="date">Jun 2024</span><span>IIT Patna · <b>1st</b> Drone race</span><span class="prize">₹50,000</span></div>
-      <div class="result"><span class="date">Mar 2024</span><span>Prathyusha Engineering College · <b>1st</b> Drone race</span><span class="prize">₹25,000</span></div>
-      <div class="result"><span class="date">Mar 2024</span><span>IIITDM Kancheepuram · <b>3rd</b> Drone race</span><span class="prize">₹7,000</span></div>
-      <div class="result"><span class="date">Mar 2024</span><span>MIT, Anna University · <b>3rd</b> Robosoccer</span><span class="prize">₹12,000</span></div>
-      <div class="result"><span class="date">Mar 2024</span><span>Amrita Vishwa Vidyapeetham, Chennai campus · <b>3rd</b> Drone racing</span><span class="prize">₹14,000</span></div>
-    </div>
+    <p class="tally"><b>11 competitions · 14 podiums</b> (7 first, 3 second, 4 third) · <b>₹7,13,000 + US$1,500</b> in prize money</p>
+    <table>
+      <tr><td class="d">Oct 2026</td><td>Vadiva Tech Fest<span class="sep">·</span><b>1st</b> Drone race, Robosoccer, RoboRetrieve; <b>3rd</b> RoboRace</td><td class="p">₹5,00,000</td></tr>
+      <tr><td class="d">Jul 2026</td><td>Technoxian ZRC, South Zone zonals<span class="sep">·</span><b>2nd</b> Drone rescue</td><td class="p">₹15,000</td></tr>
+      <tr><td class="d">May 2026</td><td>InnovateX 2026, Presidency University<span class="sep">·</span><b>1st</b> Drone race</td><td class="p">₹25,000</td></tr>
+      <tr><td class="d">Feb 2026</td><td>Robotica '26, VIT Chennai<span class="sep">·</span><b>1st</b> Drone race</td><td class="p">₹15,000</td></tr>
+      <tr><td class="d">Jan 2026</td><td>Robowunder International Robotics Championship, Malaysia<span class="sep">·</span><b>2nd</b> (silver) with Agrifly</td><td class="p">US$1,500</td></tr>
+      <tr><td class="d">2024</td><td>WRC 2024, Delhi<span class="sep">·</span><b>2nd</b> Robosoccer</td><td class="p">₹50,000</td></tr>
+      <tr><td class="d">Jun 2024</td><td>IIT Patna<span class="sep">·</span><b>1st</b> Drone race</td><td class="p">₹50,000</td></tr>
+      <tr><td class="d">Mar 2024</td><td>Prathyusha Engineering College<span class="sep">·</span><b>1st</b> Drone race</td><td class="p">₹25,000</td></tr>
+      <tr><td class="d">Mar 2024</td><td>IIITDM Kancheepuram<span class="sep">·</span><b>3rd</b> Drone race</td><td class="p">₹7,000</td></tr>
+      <tr><td class="d">Mar 2024</td><td>MIT, Anna University<span class="sep">·</span><b>3rd</b> Robosoccer</td><td class="p">₹12,000</td></tr>
+      <tr><td class="d">Mar 2024</td><td>Amrita Vishwa Vidyapeetham, Chennai campus<span class="sep">·</span><b>3rd</b> Drone race</td><td class="p">₹14,000</td></tr>
+    </table>
   </section>
 
   <section>
     <h2>Skills</h2>
     <dl class="skills">
-      <div><dt>UAV &amp; robotics: </dt><dd>Betaflight, INAV, ArduPilot, PX4, Mission Planner, ExpressLRS; freestyle, racing, line-of-sight and mapping flight; UAV and autonomous system development; FPV communication systems; robotics research</dd></div>
-      <div><dt>Electronics &amp; code: </dt><dd>Embedded C, C++, Python, ESP32, CAN protocol, sensor integration, embedded electronics, soldering</dd></div>
-      <div><dt>Design &amp; fabrication: </dt><dd>AutoCAD, mechanical design, 3D printing, rapid prototyping, technical prototyping, systems engineering</dd></div>
-      <div><dt>Leadership: </dt><dd>project leadership, cross-functional team collaboration, innovation management, strategic problem solving, technical operations, STEM initiatives</dd></div>
-      <div><dt>Equipment: </dt><dd>Walksnail Avatar V1, Skyzone Cobra X V2 goggles; RadioMaster Zorro, TX12, TX15 and Jumper Elf radios. Fleet: Agrifly (10-inch), Manta (5-inch freestyle), Switchback (5-inch racing), Apex (3-inch micro racing), Cinebot 30 (cinematic)</dd></div>
+      <dt>Design &amp; fabrication</dt><dd>AutoCAD, mechanical design, 3D printing, rapid prototyping, soldering</dd>
+      <dt>Electronics &amp; software</dt><dd>Embedded electronics, FPV communication systems, Embedded C, C++, Python</dd>
+      <dt>Flight systems</dt><dd>Betaflight, INAV, ArduPilot, PX4, Mission Planner, ExpressLRS</dd>
+      <dt>Engineering &amp; research</dt><dd>UAV and autonomous system development, systems engineering, robotics research</dd>
+      <dt>Leadership</dt><dd>Project leadership, cross-functional team collaboration, STEM initiatives</dd>
     </dl>
-  </section>
-
-  <section>
-    <h2>Education</h2>
-    <p><b>Grade 12</b>, Velammal Vidhyalaya, Vanagaram</p>
+    <p class="kit"><b>Goggles</b> Walksnail Avatar V1, Skyzone Cobra X V2<span class="sep">·</span><b>Radios</b> RadioMaster Zorro, TX12, TX15; Jumper Elf</p>
   </section>
 </body>
 </html>
