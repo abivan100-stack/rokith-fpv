@@ -246,13 +246,22 @@
             <p class="log-desc">Developed a hardware-integration model based on the CAN protocol that connects all the electronic components of a passenger VTOL aircraft.</p>
             <p class="log-tags">CAN bus · Avionics integration · VTOL · Embedded electronics</p>
           </div>
-          <svg class="log-art" viewBox="0 0 200 130" aria-hidden="true" focusable="false">
-            <path d="M10 78H190M10 86H190"/>
-            <path d="M32 78V56M70 78V46M108 78V56M146 78V46M174 86V100"/>
-            <rect x="20" y="38" width="24" height="18"/><rect x="56" y="28" width="28" height="18"/><rect x="132" y="28" width="28" height="18"/><rect x="162" y="100" width="24" height="16"/>
-            <rect class="acc" x="94" y="38" width="28" height="18"/>
-            <text x="10" y="112">CAN BUS</text>
-          </svg>
+          <figure class="log-fig" aria-hidden="true">
+            <p class="log-fig-head"><span>Fig. 01</span><span>CAN bus</span></p>
+            <svg class="log-art" viewBox="0 0 280 150" focusable="false">
+              <path class="thin" d="M30 78H246M30 86H246"/>
+              <rect class="term" x="27" y="70" width="6" height="24"/><rect class="term" x="243" y="70" width="6" height="24"/>
+              <text x="30" y="110" text-anchor="middle">120Ω</text><text x="246" y="110" text-anchor="middle">120Ω</text>
+              <text class="hl" x="256" y="81">H</text><text class="hl" x="256" y="89">L</text>
+              <path d="M62 46V78M138 46V78M214 46V78M100 86V112M176 86V112"/>
+              <g class="node" style="--t:.67s"><rect x="42" y="22" width="40" height="24"/><text x="62" y="37" text-anchor="middle">N1</text></g>
+              <g class="node" style="--t:1.46s"><rect x="80" y="112" width="40" height="24"/><text x="100" y="127" text-anchor="middle">N2</text></g>
+              <g class="node" style="--t:2.25s"><rect x="118" y="22" width="40" height="24"/><text x="138" y="37" text-anchor="middle">N3</text></g>
+              <g class="node" style="--t:3.04s"><rect x="156" y="112" width="40" height="24"/><text x="176" y="127" text-anchor="middle">N4</text></g>
+              <g class="node" style="--t:3.83s"><rect x="194" y="22" width="40" height="24"/><text x="214" y="37" text-anchor="middle">N5</text></g>
+              <rect class="pkt" x="25" y="80" width="10" height="4"/>
+            </svg>
+          </figure>
         </li>
         <li class="log-entry reveal">
           <p class="log-meta"><span class="log-type">Civic tech</span></p>
@@ -262,13 +271,26 @@
             <p class="log-desc">An autonomous waste-detection system that works from a drone's view.</p>
             <p class="log-tags">Autonomous detection · Drone view · UAV systems</p>
           </div>
-          <svg class="log-art" viewBox="0 0 200 130" aria-hidden="true" focusable="false">
-            <path d="M10 22V8H24M176 8H190V22M190 88V102H176M24 102H10V88"/>
-            <path class="thin" d="M100 48V62M93 55H107"/>
-            <rect class="det" x="26" y="24" width="36" height="24"/><rect class="det" x="128" y="62" width="40" height="26"/>
-            <rect class="det acc" x="122" y="18" width="28" height="20"/>
-            <text x="10" y="124">DRONE VIEW</text>
-          </svg>
+          <figure class="log-fig" aria-hidden="true">
+            <p class="log-fig-head"><span>Fig. 02</span><span>Drone view</span></p>
+            <svg class="log-art" viewBox="0 0 280 150" focusable="false">
+              <defs><clipPath id="cs-clip"><rect x="10" y="8" width="260" height="134"/></clipPath></defs>
+              <g clip-path="url(#cs-clip)">
+                <path class="road" d="M40 150L170 0H240L110 150Z"/>
+                <path class="thin" d="M40 150L170 0M110 150L240 0"/>
+                <path class="lane" d="M75 150L205 0"/>
+                <path class="waste" d="M54 96l7-4 6 3-1 6-8 2-5-3z"/>
+                <path class="waste" d="M219 38l6-3 7 2 0 6-6 3-7-2z"/>
+                <path class="waste" d="M152 114l8-3 5 4-2 5-8 1-4-3z"/>
+                <rect class="scan" x="10" y="8" width="260" height="2"/>
+              </g>
+              <g class="det" style="--t:2.4s"><path d="M47 88v-4h5M70 84h5v4M75 104v4h-5M52 108h-5v-4"/><rect x="47" y="74" width="34" height="9"/><text x="64" y="81" text-anchor="middle">WASTE</text></g>
+              <g class="det" style="--t:.82s"><path d="M212 30v-4h5M235 26h5v4M240 46v4h-5M217 50h-5v-4"/><rect x="212" y="16" width="34" height="9"/><text x="229" y="23" text-anchor="middle">WASTE</text></g>
+              <g class="det" style="--t:2.89s"><path d="M145 106v-4h5M168 102h5v4M173 122v4h-5M150 126h-5v-4"/><rect x="145" y="92" width="34" height="9"/><text x="162" y="99" text-anchor="middle">WASTE</text></g>
+              <path class="thin" d="M140 68V82M133 75H147"/>
+              <path d="M10 22V8H24M256 8H270V22M270 128V142H256M24 142H10V128"/>
+            </svg>
+          </figure>
         </li>
       </ol>
     </section>

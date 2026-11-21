@@ -447,7 +447,7 @@ html:not(.js) .mission-art svg { display: none; }
 .log-head .mono-label { color: var(--accent-ink); }
 .log-head h3 { grid-column: 1; font: 700 clamp(26px, 3vw, 36px)/1.1 var(--display); font-stretch: 108%; letter-spacing: -.01em; }
 .log-head > p:last-child { grid-column: 2; grid-row: 1 / span 2; color: var(--muted); text-align: right; }
-.log-entry { position: relative; display: grid; grid-template-columns: 24px 160px minmax(0, 1fr) 200px; column-gap: 24px; padding: 32px 0; border-bottom: 1px solid var(--line); }
+.log-entry { position: relative; display: grid; grid-template-columns: 24px 160px minmax(0, 1fr) 280px; column-gap: 24px; padding: 32px 0; border-bottom: 1px solid var(--line); }
 /* timeline: one line through every entry (ending at the last node), one node per entry */
 .log-entry::after { content: ""; position: absolute; left: 4px; top: 0; bottom: 0; width: 1px; background: color-mix(in srgb, var(--muted) 45%, transparent); }
 .log-entry:last-child::after { bottom: auto; height: 46px; }
@@ -461,18 +461,42 @@ html:not(.js) .mission-art svg { display: none; }
 .log-body .role { margin-top: 10px; }
 .log-desc { margin-top: 14px; max-width: 62ch; color: var(--muted); }
 .log-tags { margin-top: 16px; font: 500 12px/1.6 var(--mono); letter-spacing: .04em; color: var(--ink); }
-.log-art { grid-column: 4; grid-row: 1; align-self: start; display: block; width: 100%; max-width: 200px; height: auto; aspect-ratio: 200 / 130; overflow: visible; fill: none; stroke: var(--ink); stroke-width: 1.3; stroke-linejoin: round; }
+/* Each entry's figure: a framed drawing plate with a title strip. Fig. 01 sends a CAN frame along the bus and
+   lights each node it passes; Fig. 02 sweeps a scan line down a street seen from above and boxes the waste it finds. */
+.log-fig { grid-column: 4; grid-row: 1; align-self: start; margin: 0; border: 1px solid var(--line); background: var(--surface); }
+.log-fig-head { display: flex; justify-content: space-between; gap: 12px; padding: 8px 12px; border-bottom: 1px solid var(--line); font: 500 10px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.log-fig-head span:last-child { color: var(--accent-ink); }
+.log-art { display: block; width: 100%; height: auto; aspect-ratio: 280 / 150; fill: none; stroke: var(--ink); stroke-width: 1.2; stroke-linejoin: round; }
 .log-art .thin { stroke: var(--muted); stroke-width: 1; }
-.log-art .det { stroke-dasharray: 4 3; }
-.log-art .acc { stroke: var(--accent); stroke-width: 1.6; transition: opacity .4s ease .3s; }
-.log-art text { fill: var(--muted); stroke: none; font: 500 10px var(--mono); letter-spacing: .12em; }
-.js .log-entry:not(.in) .log-art .acc { opacity: 0; }
+.log-art text { fill: var(--muted); stroke: none; font: 500 8px var(--mono); letter-spacing: .08em; }
+.log-art .node rect, .log-art .term { fill: var(--surface); }
+.log-art .node text { fill: var(--ink); font-size: 9px; }
+.log-art .pkt { fill: var(--accent); stroke: none; }
+.log-art .road { fill: color-mix(in srgb, var(--muted) 9%, transparent); stroke: none; }
+.log-art .lane { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 6 6; }
+.log-art .waste { fill: color-mix(in srgb, var(--muted) 35%, transparent); stroke: var(--ink); stroke-width: 1; }
+.log-art .det path { stroke: var(--accent); stroke-width: 1.6; }
+.log-art .det rect { fill: var(--accent); stroke: none; }
+.log-art .det text { fill: var(--on-accent); font-size: 7px; }
+.log-art .scan { fill: var(--accent); stroke: none; opacity: .55; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .log-art .pkt { animation: log-pkt 4.5s linear infinite; }
+  .log-art .node rect { animation: log-node 4.5s linear var(--t) infinite; }
+  .log-art .scan { animation: log-scan 3.6s linear infinite; }
+  .log-art .det { opacity: 0; animation: log-det 3.6s linear var(--t) infinite; }
+  .js .log-entry:not(.in) .log-art * { animation-play-state: paused; }
+}
+@keyframes log-pkt { 0% { transform: translateX(0); opacity: 0; } 4%, 96% { opacity: 1; } 100% { transform: translateX(216px); opacity: 0; } }
+@keyframes log-node { 0% { stroke: var(--accent); fill: color-mix(in srgb, var(--accent) 14%, var(--surface)); } 18%, 100% { stroke: var(--ink); fill: var(--surface); } }
+@keyframes log-scan { 0% { transform: translateY(0); opacity: 0; } 6%, 92% { opacity: .55; } 100% { transform: translateY(132px); opacity: 0; } }
+@keyframes log-det { 0% { opacity: 0; } 5%, 80% { opacity: 1; } 90%, 100% { opacity: 0; } }
 
 @media (max-width: 1099px) {
   .log-head { grid-template-columns: minmax(0, 1fr); }
   .log-head > p:last-child { grid-column: 1; grid-row: auto; max-width: none; text-align: left; }
   .log-entry { grid-template-columns: 24px 140px minmax(0, 1fr); }
-  .log-art { grid-column: 3; grid-row: 2; margin-top: 24px; }
+  .log-fig { grid-column: 3; grid-row: 2; margin-top: 24px; max-width: 400px; }
 }
 @media (max-width: 759px) {
   .log-entry { grid-template-columns: 24px minmax(0, 1fr); column-gap: 14px; padding: 26px 0; }
@@ -481,7 +505,7 @@ html:not(.js) .mission-art svg { display: none; }
   .log-meta { flex-direction: row; flex-wrap: wrap; gap: 0; padding-top: 0; }
   .log-meta > span + span::before { content: "\00a0·\00a0"; color: var(--muted); }
   .log-body { grid-column: 2; grid-row: 2; margin-top: 12px; }
-  .log-art { grid-column: 2; grid-row: 3; max-width: 180px; }
+  .log-fig { grid-column: 2; grid-row: 3; max-width: none; }
 }
 
 .medal {
@@ -764,7 +788,8 @@ html:not(.js) .mission-art svg { display: none; }
   .js .reveal { opacity: 1; transform: none; transition: none; }
   .qa .disc, .craft .drone, .spec-card, .callout, .build-steps li, .build-steps p { transition: none; }
   .mission-art .drone, .system-groups a { transition: none; }
-  .log-entry::before, .log-art .acc { transition: none; }
+  .log-entry::before { transition: none; }
+  .log-art .pkt, .log-art .scan { display: none; }
   .project.feature:is(:hover, :focus-within) .mission-art .drone { transform: none; }
   .pipe-track::before { transform: none; transition: none; }
   .pt-node i, .stage::before, .stage-skills li::before, .proof a { transition: none; }
