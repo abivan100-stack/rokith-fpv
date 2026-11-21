@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
-  <link rel="stylesheet" href="styles.css?v=20261121d">
+  <link rel="stylesheet" href="styles.css?v=20261121e">
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -591,20 +591,39 @@
 
       <!-- Band 3: comms links and the latest result as proof. -->
       <div class="lp-end">
-        <div class="lp-comms">
-          <p class="mono-label">Comms</p>
-          <ul class="comms reveal">
-            <li><a href="https://www.linkedin.com/in/rokith-kumaar-42295a380/" target="_blank" rel="noopener"><span class="c-label">LinkedIn</span><span class="c-lead" aria-hidden="true"></span><span class="c-val">Rokith Kumaar</span><span class="arr" aria-hidden="true">↗</span><span class="sr-only">(opens in new tab)</span></a></li>
-            <li><a href="https://www.instagram.com/rokith_fpv/" target="_blank" rel="noopener"><span class="c-label">Instagram</span><span class="c-lead" aria-hidden="true"></span><span class="c-val">@rokith_fpv</span><span class="arr" aria-hidden="true">↗</span><span class="sr-only">(opens in new tab)</span></a></li>
-          </ul>
+        <!-- Comms: a radio panel. Each link is a tuned channel; the dial needle moves to the channel in use. -->
+        <div class="lp-comms reveal">
+          <h3 class="mono-label" id="comms-h">Comms</h3>
+          <div class="radio">
+            <div class="radio-dial" aria-hidden="true">
+              <span class="dial-ch">CH 01</span><span class="dial-ch">CH 02</span>
+              <span class="dial-needle"></span>
+            </div>
+            <ul class="comms" aria-labelledby="comms-h">
+              <li><a href="https://www.linkedin.com/in/rokith-kumaar-42295a380/" target="_blank" rel="noopener"><span class="c-sig" aria-hidden="true"><span class="c-ch">CH 01</span><span class="c-wave"><svg viewBox="0 0 128 20" focusable="false"><path d="M0 10q8-9 16 0t16 0 16 0 16 0 16 0 16 0 16 0 16 0"/></svg></span></span><span class="c-txt"><span class="c-label">LinkedIn</span><span class="c-val">Rokith Kumaar</span></span><span class="arr" aria-hidden="true">↗</span><span class="sr-only">(opens in new tab)</span></a></li>
+              <li><a href="https://www.instagram.com/rokith_fpv/" target="_blank" rel="noopener"><span class="c-sig" aria-hidden="true"><span class="c-ch">CH 02</span><span class="c-wave"><svg viewBox="0 0 128 20" focusable="false"><path d="M0 10l4-7 4 14 4-12 4 10 4-8 4 12 4-14 4 9 4-6 4 11 4-13 4 8 4-4 4 10 4-10 4 0 4-7 4 14 4-12 4 10 4-8 4 12 4-14 4 9 4-6 4 11 4-13 4 8 4-4 4 10 4-10 4 0"/></svg></span></span><span class="c-txt"><span class="c-label">Instagram</span><span class="c-val">@rokith_fpv</span></span><span class="arr" aria-hidden="true">↗</span><span class="sr-only">(opens in new tab)</span></a></li>
+            </ul>
+          </div>
         </div>
-        <!-- Update with each new top result in #results -->
-        <div class="sortie reveal">
-          <p class="mono-label">Last sortie · Oct 2026</p>
-          <p class="sortie-name">Vadiva Tech Fest</p>
-          <p class="sortie-haul"><span class="m gold">Gold ×3</span> <span class="m bronze">Bronze ×1</span> <span class="sortie-prize">₹5,00,000</span></p>
-          <a class="sortie-link" href="#results">All results <span class="arr" aria-hidden="true">→</span></a>
-        </div>
+        <!-- Debrief: the latest top result as a mission tag. Update with each new top result in #results. -->
+        <article class="debrief reveal" aria-labelledby="debrief-h">
+          <div class="debrief-main">
+            <p class="debrief-strip"><span>Debrief · Last sortie</span><span class="debrief-date">Oct 2026</span></p>
+            <h3 class="debrief-name" id="debrief-h">Vadiva Tech Fest</h3>
+            <ul class="debrief-medals">
+              <li class="gold"><svg viewBox="0 0 28 40" aria-hidden="true" focusable="false"><path class="rib" d="M8 0h12l-2.5 16h-7z"/><path class="stripe" d="M14 0v16"/><circle class="disc" cx="14" cy="27" r="11"/><circle class="rim" cx="14" cy="27" r="7"/></svg><span class="ev">Drone race</span><span class="pl">Gold</span></li>
+              <li class="gold"><svg viewBox="0 0 28 40" aria-hidden="true" focusable="false"><path class="rib" d="M8 0h12l-2.5 16h-7z"/><path class="stripe" d="M14 0v16"/><circle class="disc" cx="14" cy="27" r="11"/><circle class="rim" cx="14" cy="27" r="7"/></svg><span class="ev">Robosoccer</span><span class="pl">Gold</span></li>
+              <li class="gold"><svg viewBox="0 0 28 40" aria-hidden="true" focusable="false"><path class="rib" d="M8 0h12l-2.5 16h-7z"/><path class="stripe" d="M14 0v16"/><circle class="disc" cx="14" cy="27" r="11"/><circle class="rim" cx="14" cy="27" r="7"/></svg><span class="ev">RoboRetrieve</span><span class="pl">Gold</span></li>
+              <li class="bronze"><svg viewBox="0 0 28 40" aria-hidden="true" focusable="false"><path class="rib" d="M8 0h12l-2.5 16h-7z"/><path class="stripe" d="M14 0v16"/><circle class="disc" cx="14" cy="27" r="11"/><circle class="rim" cx="14" cy="27" r="7"/></svg><span class="ev">RoboRace</span><span class="pl">Bronze</span></li>
+            </ul>
+          </div>
+          <div class="debrief-stub">
+            <svg class="debrief-route" viewBox="0 0 120 40" aria-hidden="true" focusable="false"><circle class="wp" cx="6" cy="32" r="3"/><path class="leg" d="M9 31C40 26 52 6 86 12"/><rect class="pad" x="92" y="4" width="22" height="22" rx="2"/><path class="h" d="M99 9v12M107 9v12M99 15h8"/></svg>
+            <p class="mono-label">Prize</p>
+            <p class="debrief-prize">₹5,00,000</p>
+            <a class="debrief-link" href="#results">All results <span class="arr" aria-hidden="true">→</span></a>
+          </div>
+        </article>
       </div>
       <!-- Compose panel: mailto links do nothing on computers without a desktop mail app, so the briefs open here
            and the visitor picks Gmail, Outlook, their email app, or copies the message. Without JS the mailto links still work. -->
@@ -644,6 +663,6 @@
     <p>Chennai, India</p>
   </footer>
 
-  <script src="script.js?v=20261121d"></script>
+  <script src="script.js?v=20261121e"></script>
 </body>
 </html>

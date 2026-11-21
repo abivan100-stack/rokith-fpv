@@ -679,8 +679,12 @@ html:not(.js) .mission-art svg { display: none; }
 .contact .arr { display: inline-block; transition: transform .2s ease, color .2s ease; }
 .lp-approach { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(32px, 6vw, 96px); align-items: center; }
 .lp-plans, .lp-end { margin-top: clamp(32px, 3.5vw, 48px); padding-top: clamp(32px, 3.5vw, 48px); border-top: 1px solid var(--line); }
-.lp-end { display: grid; grid-template-columns: minmax(0, .9fr) repeat(2, minmax(0, 1fr)); gap: 32px 16px; align-items: start; }
-.lp-comms { grid-column: 1 / 3; padding-right: clamp(24px, 4vw, 64px); }
+.lp-end { display: grid; grid-template-columns: minmax(0, .9fr) repeat(2, minmax(0, 1fr)); gap: 24px 16px; align-items: stretch; }   /* same columns as the flight plans above */
+.lp-comms { display: flex; flex-direction: column; padding-right: 24px; }
+.lp-comms .radio { flex: 1; display: flex; flex-direction: column; }
+.lp-comms .comms { flex: 1; display: flex; flex-direction: column; }
+.lp-comms .comms li { flex: 1; display: flex; }
+.lp-comms .comms a { flex: 1; }
 @media (min-width: 1100px) {
   .contact { min-height: calc(100svh - 56px); padding-top: 64px; padding-bottom: 64px; display: flex; flex-direction: column; justify-content: center; }
   .contact .sec-head { margin-bottom: 32px; }
@@ -811,27 +815,88 @@ html:not(.js) .mission-art svg { display: none; }
   .compose-actions { grid-template-columns: 1fr 1fr; }
 }
 
-/* Band 3: comms rows and the latest result */
-.comms { margin-top: 12px; border-top: 1px solid var(--ink); }
-.comms a { display: flex; align-items: baseline; gap: 12px; min-height: 48px; padding: 12px 0; border-bottom: 1px solid var(--line); text-decoration: none; }
-.c-label { font: 500 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); min-width: 92px; }
-.c-lead { flex: 1; min-width: 16px; border-bottom: 1px dotted var(--muted); transform: translateY(-4px); transition: border-color .2s ease; }
-.c-val { font: 600 18px/1.3 var(--display); }
-.comms a:hover .c-lead, .comms a:focus-visible .c-lead { border-color: var(--accent); }
-.comms a:hover .arr, .comms a:focus-visible .arr { color: var(--accent-ink); transform: translate(3px, -3px); }
-.sortie { border: 1px solid var(--line); background: var(--surface); padding: 20px 22px; }
-.sortie-name { margin-top: 8px; font: 600 clamp(20px, 2vw, 24px)/1.25 var(--display); font-stretch: 105%; }
-.sortie-haul { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; margin-top: 10px; font: 500 13px var(--mono); letter-spacing: .04em; }
-.sortie .m::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 8px; border-radius: 50%; background: currentColor; vertical-align: 1px; }
-.sortie .m.gold { color: var(--gold); }
-.sortie .m.bronze { color: var(--bronze); }
-.sortie-prize { font-variant-numeric: tabular-nums; }
-.sortie-link { display: inline-block; margin-top: 16px; padding: 4px 0; font: 500 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; text-decoration: none; color: var(--accent-ink); }
-.sortie-link:hover .arr, .sortie-link:focus-visible .arr { transform: translateX(4px); }
+/* Band 3, comms: a radio panel. A tuning dial on top; each link is a channel whose signal comes up on hover/focus. */
+.radio { margin-top: 12px; border: 1px solid var(--ink); background: var(--surface); }
+.radio-dial {
+  position: relative; overflow: hidden; display: flex; justify-content: space-around; height: 44px; padding-top: 7px;
+  border-bottom: 1px solid var(--ink);
+  font: 500 10px/1 var(--mono); letter-spacing: .14em; color: var(--muted);
+  background:
+    repeating-linear-gradient(90deg, var(--muted) 0 1px, transparent 1px 100%) 0 100% / 25% 14px repeat-x,
+    repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 100%) 0 100% / calc(25% / 6) 7px repeat-x;
+}
+.dial-ch { transition: color .2s; }
+.dial-needle { position: absolute; inset: 0; pointer-events: none; transform: translateX(50%); transition: transform .55s cubic-bezier(.3, 1.35, .5, 1); }   /* parked between channels */
+.dial-needle::before { content: ""; position: absolute; left: -1px; top: 22px; bottom: -1px; width: 2px; background: var(--muted); transition: background-color .2s; }
+.dial-needle::after { content: ""; position: absolute; left: -4px; top: 18px; border: 4px solid transparent; border-top-color: var(--muted); transition: border-color .2s; }
+.radio:has(li:first-child a:is(:hover, :focus-visible)) .dial-needle { transform: translateX(25%); }
+.radio:has(li:last-child a:is(:hover, :focus-visible)) .dial-needle { transform: translateX(75%); }
+.radio:has(.comms a:is(:hover, :focus-visible)) .dial-needle::before { background: var(--accent); }
+.radio:has(.comms a:is(:hover, :focus-visible)) .dial-needle::after { border-top-color: var(--accent); }
+.radio:has(li:first-child a:is(:hover, :focus-visible)) .dial-ch:first-child,
+.radio:has(li:last-child a:is(:hover, :focus-visible)) .dial-ch:last-child { color: var(--accent-ink); }
+
+.comms li + li { border-top: 1px solid var(--line); }
+.comms a { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; align-items: center; gap: 16px; min-height: 72px; padding: 12px 16px; text-decoration: none; transition: background-color .2s; }
+.comms a:hover, .comms a:focus-visible { background-color: var(--bg); }
+.comms a:focus-visible { outline-offset: -4px; }
+.c-sig { display: flex; flex-direction: column; gap: 6px; }
+.c-ch { font: 500 11px/1 var(--mono); letter-spacing: .12em; color: var(--muted); transition: color .2s; }
+.c-wave { display: block; width: 56px; height: 20px; overflow: hidden; transform: scaleY(.4); transition: transform .35s ease; }
+.c-wave svg { display: block; width: 128px; height: 20px; fill: none; stroke: var(--muted); stroke-width: 1.4; stroke-linejoin: round; vector-effect: non-scaling-stroke; animation: c-scan 1.4s linear infinite paused; transition: stroke .2s; }
+.c-wave path { vector-effect: non-scaling-stroke; }
+@keyframes c-scan { to { transform: translateX(-64px); } }
+.c-txt { display: flex; flex-direction: column; min-width: 0; }
+.c-label { font: 500 11px/1.5 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.c-val { font: 600 18px/1.3 var(--display); overflow-wrap: anywhere; }
+.comms .arr { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid var(--line); border-radius: 2px; font-size: 15px; transition: transform .2s ease, color .2s, background-color .2s, border-color .2s; }
+.comms a:is(:hover, :focus-visible) .c-ch { color: var(--accent-ink); }
+.comms a:is(:hover, :focus-visible) .c-wave { transform: none; }
+.comms a:is(:hover, :focus-visible) .c-wave svg { stroke: var(--accent); animation-play-state: running; }
+.comms a:is(:hover, :focus-visible) .arr { background-color: var(--ink); border-color: var(--ink); color: var(--surface); transform: translate(2px, -2px); }
+
+/* Band 3, debrief: the latest result as a mission tag with a tear-off stub. Medals hang from the rail and swing on hover. */
+.debrief { position: relative; grid-column: 2 / 4; margin-top: calc(12px * 1.4 + 12px);   /* top edge level with the radio panel beside it */ display: grid; grid-template-columns: minmax(0, 1fr) minmax(180px, 34%); border: 1px solid var(--ink); background: var(--surface); }
+.debrief-strip { display: flex; justify-content: space-between; gap: 12px; padding: 10px 22px; border-bottom: 1px solid var(--ink); background: var(--ink); color: color-mix(in srgb, var(--surface) 72%, var(--ink)); font: 500 11px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+.debrief-date { color: var(--surface); }
+.debrief-name { padding: 20px 22px 0; font: 600 clamp(22px, 2.2vw, 26px)/1.2 var(--display); font-stretch: 105%; }
+.debrief-medals { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 16px 22px 22px; border-top: 1px solid var(--ink); }
+.debrief-medals li { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+.debrief-medals svg { width: 34px; height: 48px; margin: -1px 0 10px; transform-origin: 50% 0; }
+.debrief-medals .rib { fill: var(--ink); }
+.debrief-medals .stripe { stroke: var(--accent); stroke-width: 2; }
+.debrief-medals .disc { stroke: var(--ink); stroke-width: 1.2; }
+.debrief-medals .rim { fill: none; stroke: color-mix(in srgb, var(--surface) 55%, transparent); stroke-width: 1.2; }
+.debrief-medals .gold .disc { fill: var(--gold); }
+.debrief-medals .bronze .disc { fill: var(--bronze); }
+.debrief-medals .ev { font-weight: 600; font-size: 15px; line-height: 1.3; overflow-wrap: anywhere; }
+.debrief-medals .pl { margin-top: 2px; font: 500 11px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.debrief:is(:hover, :focus-within) .debrief-medals svg { animation: medal-swing 1.1s ease-out; }
+.debrief-medals li:nth-child(2) svg { animation-delay: .07s; }
+.debrief-medals li:nth-child(3) svg { animation-delay: .14s; }
+.debrief-medals li:nth-child(4) svg { animation-delay: .21s; }
+@keyframes medal-swing { 0%, 100% { transform: none; } 20% { transform: rotate(9deg); } 45% { transform: rotate(-6deg); } 70% { transform: rotate(3deg); } }
+
+.debrief-stub { position: relative; display: flex; flex-direction: column; padding: 18px 22px; border-left: 1px dashed var(--muted); }
+.debrief-stub::before, .debrief-stub::after { content: ""; position: absolute; left: -9px; width: 16px; height: 16px; border: 1px solid var(--ink); border-radius: 50%; background: var(--bg); }   /* punched notches on the tear line */
+.debrief-stub::before { top: -9px; clip-path: inset(50% 0 0 0); }
+.debrief-stub::after { bottom: -9px; clip-path: inset(0 0 50% 0); }
+.debrief-route { display: block; width: 100%; max-width: 132px; height: auto; margin-bottom: 14px; overflow: visible; }
+.debrief-route .wp { fill: var(--accent); }
+.debrief-route .leg { fill: none; stroke: var(--accent); stroke-width: 1.4; stroke-dasharray: 2 6; stroke-linecap: round; }
+.debrief-route .pad { fill: none; stroke: var(--ink); stroke-width: 1.3; transition: stroke .2s; }
+.debrief-route .h { fill: none; stroke: var(--ink); stroke-width: 1.6; transition: stroke .2s; }
+.debrief:is(:hover, :focus-within) .debrief-route :is(.pad, .h) { stroke: var(--accent); }
+.debrief-prize { margin-top: 2px; font: 700 clamp(26px, 2.6vw, 32px)/1.1 var(--display); font-stretch: 106%; font-variant-numeric: tabular-nums; }
+.debrief-link { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; min-height: 44px; margin-top: auto; padding: 12px 8px 0 0; font: 500 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; text-decoration: none; color: var(--accent-ink); }
+.debrief-link:is(:hover, :focus-visible) .arr { transform: translateX(4px); }
 
 @media (max-width: 1099px) {
   .lp-approach, .lp-end { grid-template-columns: 1fr; }
-  .lp-comms { grid-column: auto; padding-right: 0; }
+  .lp-comms { padding-right: 0; }
+  .debrief { grid-column: auto; margin-top: 0; }
+  .lp-comms .comms { flex-direction: row; }   /* channels side by side under one dial */
+  .lp-comms .comms li + li { border-top: 0; border-left: 1px solid var(--line); }
   .lp-pad { order: -1; max-width: 320px; justify-self: start; }  /* line up with the left-aligned content below */
   .lp-plans { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .lp-plans-head { grid-column: 1 / -1; padding-right: 0; }
@@ -851,10 +916,19 @@ html:not(.js) .mission-art svg { display: none; }
   .lp-actions .btn { flex: 1 1 100%; text-align: center; }
   .lp-data > div { grid-template-columns: 76px minmax(0, 1fr); gap: 12px; }
 }
+@media (max-width: 759px) {
+  .lp-comms .comms { flex-direction: column; }
+  .lp-comms .comms li + li { border-left: 0; border-top: 1px solid var(--line); }
+  .debrief { grid-template-columns: 1fr; }
+  .debrief-medals { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 0; }
+  .debrief-medals li:nth-child(-n+2) { padding-bottom: 16px; }
+  .debrief-medals li:nth-child(n+3) { border-top: 1px solid var(--line); }   /* second rail */
+  .debrief-stub { border-left: 0; border-top: 1px dashed var(--muted); }
+  .debrief-stub::before { top: -9px; left: -9px; clip-path: inset(0 0 0 50%); }
+  .debrief-stub::after { top: -9px; bottom: auto; left: auto; right: -9px; clip-path: inset(0 50% 0 0); }
+}
 @media (max-width: 359px) {
-  .comms a { flex-wrap: wrap; gap: 2px 12px; }
-  .c-label { flex-basis: 100%; }
-  .c-lead { display: none; }
+  .comms a { gap: 12px; padding: 12px; }
 }
 
 /* Runway footer: a centreline of dashes along its top edge */
@@ -881,7 +955,9 @@ html:not(.js) .mission-art svg { display: none; }
   .pt-node i, .stage::before, .stage-skills li::before, .proof a { transition: none; }
   .pt-node i { background: var(--accent); border-color: var(--accent); }
   .stage::before { background: var(--accent); border-color: var(--accent); }
-  .btn, .copy, .brief, .c-lead, .contact .arr { transition: none; }
+  .btn, .copy, .brief, .contact .arr { transition: none; }
+  .dial-ch, .dial-needle, .dial-needle::before, .dial-needle::after, .comms a, .c-ch, .c-wave, .c-wave svg, .debrief-route * { transition: none; }
+  .c-wave svg, .debrief:is(:hover, :focus-within) .debrief-medals svg { animation: none; }
   .brief-sheet, .brief-strip, .brief-code, .brief-row::after, .brief-stamp { transition: none; }
   .lp-dot { animation: none; }
 }
