@@ -697,100 +697,67 @@ html:not(.js) .mission-art svg { display: none; }
 .proof a::after { content: "\00a0\2192" / ""; color: var(--accent-ink); }  /* no-break space keeps the arrow on the last word */
 .proof a:hover { color: var(--accent-ink); text-decoration-color: currentColor; }
 
-/* lead band "flight lead": a span bracket across all four stages, the lead skills flown as a V formation, two sortie cards */
-.lead-band { --lb-pad: 28px; margin-top: 32px; padding: 0 var(--lb-pad) var(--lb-pad); border: 1px dashed var(--muted); border-top: 0; }
-/* bracket: pulled out over the side borders so its columns are the pipeline's columns exactly */
-.lb-span { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); height: 44px; margin: 0 calc(-1px - var(--lb-pad)); border-top: 1px solid var(--ink); font: 500 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
-.lb-span::before, .lb-span::after { content: ""; position: absolute; top: -7px; width: 1px; height: 18px; background: var(--ink); }
-.lb-span::before { left: 0; } .lb-span::after { right: 0; }
-.lb-span span { position: relative; display: flex; justify-content: center; padding-top: 14px; font-variant-numeric: tabular-nums;
-  background: linear-gradient(var(--ink), var(--ink)) 50% 0 / 1px 6px no-repeat; }   /* centre tick under each stage */
-.lb-span span + span::before { content: ""; position: absolute; left: 0; top: -4px; width: 1px; height: 8px; background: var(--ink); }   /* stage dividers */
-.lb-span b { position: absolute; left: 50%; top: -6px; transform: translateX(-50%); padding: 0 12px; background: var(--bg); line-height: 11px; font-weight: 500; color: var(--ink); white-space: nowrap; }
+/* lead band "the throughline": the section's closing statement, set open on the page between two ink rules.
+   Columns are the pipeline's columns, so the statement starts on stage 01's text edge and the notes on stage 04's. */
+.lead-band { position: relative; display: grid; margin-top: 56px; border-bottom: 1px solid var(--ink); }
+.lead-band::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: var(--ink); transform-origin: left; }   /* top rule */
+.js .lead-band::before { transform: scaleX(0); transition: transform 1.1s cubic-bezier(.4, 0, .2, 1) .15s; }
+.js .lead-band.in::before { transform: none; }
+.lb-main { padding: 30px 0 34px; }
+.lb-main .sec-no { margin-bottom: 14px; }
+.lb-statement { font: 600 clamp(25px, 3vw, 34px)/1.2 var(--display); font-stretch: 105%; letter-spacing: -.012em; text-wrap: pretty; }
+.lb-lede { font-weight: 500; }
+.lb-lede, .lb-skills li::after { color: var(--muted); }
+.lb-skills, .lb-skills li { display: inline; }
+.lb-skills span { background: linear-gradient(color-mix(in srgb, var(--accent) 22%, transparent) 0 0) 0 88% / 0 .32em no-repeat; transition: background-size .5s ease; }   /* no underline at rest: these are not links. On hover a highlighter stroke sweeps under each skill */
+.lb-skills li:nth-child(-n+4)::after { content: "," / ""; }
+.lb-skills li:nth-child(5)::after { content: " and" / ""; font-weight: 500; }
+.lb-skills li:last-child::after { content: "." / ""; }
+.lead-band:is(:hover, :focus-within) .lb-skills span { background-size: 100% .32em; }
+.lead-band:is(:hover, :focus-within) .lb-skills li:nth-child(2) span { transition-delay: .05s; }
+.lead-band:is(:hover, :focus-within) .lb-skills li:nth-child(3) span { transition-delay: .1s; }
+.lead-band:is(:hover, :focus-within) .lb-skills li:nth-child(4) span { transition-delay: .15s; }
+.lead-band:is(:hover, :focus-within) .lb-skills li:nth-child(5) span { transition-delay: .2s; }
+.lead-band:is(:hover, :focus-within) .lb-skills li:nth-child(6) span { transition-delay: .25s; }
+/* note references, set like an article's superscripts: raised by a relative offset so the line box stays even;
+   inline padding widens the target without moving the type or adding a break point after the full stop */
+.lb-refs { position: relative; top: -.42em; white-space: nowrap; }
+.lb-refs a { margin-left: 2px; padding: 4px 2px; font: 500 13px/1 var(--mono); color: var(--accent-ink); text-decoration: none; }
+.lb-refs a:first-child { padding-right: 0; }
+.lb-refs a + a { margin-left: 0; padding-left: 0; }
+.lb-refs a + a::before { content: "," / ""; margin-right: 1px; }
+.lb-refs a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.lb-refs a:focus-visible { outline-offset: 0; }
 
-.lb-body { display: grid; gap: 28px; padding-top: 4px; }
-.lb-flight h3 { margin-bottom: 0; }
+/* notes: "Used in" as numbered footnotes */
+.lb-notes { padding-bottom: 36px; }
+.lb-notes .mono-label { font-size: 11px; margin-bottom: 14px; }
+.lb-notes ol { display: grid; gap: 22px; line-height: 1.45; text-wrap: pretty; }
+.lb-notes p { margin-bottom: 6px; font: 500 11px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); text-wrap: balance; }
+.lb-notes li p::before { content: counter(list-item) "\2002" / ""; color: var(--accent-ink); }
+.lb-notes a { font-size: 15px; font-weight: 600; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 4px; text-decoration-thickness: 1px; transition: color .15s, text-decoration-color .15s; }
+.lb-notes a::after { content: "\00a0\2192" / ""; color: var(--accent-ink); }  /* no-break space keeps the arrow on the last word */
+.lb-notes a:hover { color: var(--accent-ink); text-decoration-color: currentColor; }
 
-/* formation chart: a fixed 653 x 330 px plate. Glyph centres sit --dx across and --dy back from the lead (x, y per wingman);
-   the SVG shares that origin, so every link ends exactly on a ring's outer edge (lead r 24, wingmen r 18). */
-.lb-formation { --dx: 72px; --dy: 84px; --ox: 342px; --oy: 92px; position: relative; width: 653px; height: 330px; margin: 6px auto 0; }
-.lb-chart { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke-width: 1; }
-.lb-arc { stroke: var(--muted); stroke-dasharray: 1 5; opacity: .7; }   /* station arc through 02 and 03 */
-.lb-range { stroke: var(--accent); stroke-dasharray: 2 4.283; opacity: .7; transform-box: fill-box; transform-origin: center; }   /* range ring: 32 dashes */
-.lb-hdg path { stroke: var(--muted); stroke-linecap: round; stroke-linejoin: round; }
-.lb-hdg text { fill: var(--muted); stroke: none; font: 500 10px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; text-anchor: end; }
-.lb-links { stroke: var(--muted); }
-.lb-draw { stroke: var(--accent); stroke-width: 1.5; }
-.lb-draw path { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset .35s ease-out; }
-.lb-defs { position: absolute; }
-.lb-skills { counter-reset: lb 1; }
-.lb-skills li { --r: 18px; position: absolute; left: calc(var(--ox) + var(--x, 0) * var(--dx)); top: calc(var(--oy) + var(--y, 0) * var(--dy)); width: 0; height: 0; counter-increment: lb; }
-.lb-l1 { --x: -1; --y: 1; } .lb-r1 { --x: 1; --y: 1; } .lb-l2 { --x: -2; --y: 2; } .lb-r2 { --x: 2; --y: 2; } .lb-slot { --y: 2; }
-.lb-skills svg { position: absolute; left: calc(-1 * var(--r)); top: calc(-1 * var(--r)); width: calc(2 * var(--r)); height: calc(2 * var(--r)); padding: 6px; border: 1px solid var(--ink); border-radius: 50%; background: var(--surface);
-  fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform .45s cubic-bezier(.3, .7, .2, 1), border-color .3s, stroke .3s; transition-delay: calc(var(--y, 0) * .28s); }
-/* label: slot number over the skill, one line each, 12 px off the ring, mirrored left and right */
-.lb-skills span { position: absolute; top: 0; width: max-content; font-size: 15px; line-height: 20px; white-space: nowrap; transform: translateY(-50%); }
-.lb-skills span::before { content: counter(lb, decimal-leading-zero) / ""; display: block; font: 500 10px/14px var(--mono); letter-spacing: .12em; text-transform: uppercase; font-variant-numeric: tabular-nums; color: var(--muted); transition: color .3s; transition-delay: calc(var(--y, 0) * .28s); }
-.lb-l1 span, .lb-l2 span { right: calc(var(--r) + 12px); text-align: right; }
-.lb-r1 span, .lb-r2 span { left: calc(var(--r) + 12px); }
-.lb-slot span { top: calc(var(--r) + 10px); left: 0; transform: translateX(-50%); text-align: center; }
-.lb-skills .lb-lead { --r: 24px; counter-increment: none; }
-.lb-skills .lb-lead svg { padding: 8px; border: 1.5px solid var(--accent); stroke: var(--accent); stroke-width: 1.25; }
-.lb-lead circle { stroke-dasharray: 4.2 1.4; transform-box: fill-box; transform-origin: center; }   /* segmented so a spin reads */
-.lb-skills .lb-lead span { top: auto; bottom: calc(var(--r) + 14px); left: 0; transform: translateX(-50%); text-align: center; font-size: 17px; line-height: 22px; font-weight: 700; }
-.lb-skills .lb-lead span::before { content: "Lead" / ""; color: var(--accent-ink); }
-/* hover or focus inside the band: the links draw out from the lead and each rank answers as its link arrives */
-.lead-band:is(:hover, :focus-within) .lb-draw path { stroke-dashoffset: 0; }
-.lead-band:is(:hover, :focus-within) .lb-draw .lb-k2 { transition-delay: .3s; }
-.lead-band:is(:hover, :focus-within) .lb-draw .lb-ks { transition-duration: .6s; }
-.lead-band:is(:hover, :focus-within) .lb-skills svg { border-color: var(--accent); transform: scale(1.1); }
-.lead-band:is(:hover, :focus-within) .lb-skills span::before { color: var(--accent-ink); }
-.lead-band:is(:hover, :focus-within) .lb-lead circle { animation: lb-prop .5s linear infinite; }
-.lead-band:is(:hover, :focus-within) .lb-range { animation: lb-prop 14s linear infinite; }
-@keyframes lb-prop { to { transform: rotate(360deg); } }
-
-/* sorties: the two "Used in" links as cards; the link stretches over the whole card */
-.lb-sorties { display: grid; gap: 12px; align-content: start; }
-.lb-sorties .mono-label { font-size: 11px; }
-.lb-sortie { position: relative; padding: 16px 18px 18px; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--ink); transition: transform .2s, border-color .2s; }
-.lb-sortie p { margin-bottom: 8px; font: 500 11px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); transition: color .2s; }
-.lb-sortie a { display: block; font-size: 16px; line-height: 1.45; font-weight: 600; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 4px; text-decoration-thickness: 1px; transition: color .2s, text-decoration-color .2s; }
-.lb-sortie a::before { content: ""; position: absolute; inset: 0; }
-.lb-sortie a::after { content: "\00a0\2192" / ""; color: var(--accent-ink); }  /* no-break space keeps the arrow on the last word */
-.lb-sortie a:focus-visible { outline: none; }
-.lb-sortie:is(:hover, :has(a:focus-visible)) { border-color: var(--ink); border-left-color: var(--accent); transform: translateY(-2px); }
-.lb-sortie:has(a:focus-visible) { outline: 2px solid var(--accent); outline-offset: 3px; }
-.lb-sortie:is(:hover, :has(a:focus-visible)) p, .lb-sortie:is(:hover, :has(a:focus-visible)) a { color: var(--accent-ink); }
-.lb-sortie:is(:hover, :has(a:focus-visible)) a { text-decoration-color: currentColor; }
-
-@media (min-width: 900px) and (max-width: 1279px) {
-  .lb-sorties { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; }
-  .lb-sorties .mono-label { grid-column: 1 / -1; }
+@media (min-width: 1100px) {
+  .lead-band { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .lb-main { grid-column: 1 / 4; padding-right: 48px; }
+  /* the notes column continues stage 04's divider, rule to rule; its numbers hang in the gutter so the text sits on 04's text edge */
+  .lb-notes { padding: 30px 0 34px 24px; border-left: 1px solid var(--line); }
+  .lb-notes li p::before { position: absolute; margin-left: -14px; }
+  .lb-sep { display: block; height: 0; overflow: hidden; }   /* the column is too narrow for one line: break at the separator, never after it */
 }
-/* wide: chart on the left edge, the two cards share its height */
-@media (min-width: 1280px) {
-  .lb-body { grid-template-columns: auto minmax(0, 1fr); gap: 48px; }
-  .lb-formation { margin-inline: 0; }
-  .lb-sorties { grid-template-rows: auto 1fr 1fr; }
-  .lb-sortie { display: flex; flex-direction: column; justify-content: center; }
+@media (min-width: 760px) and (max-width: 1099px) {
+  .lb-main { padding-bottom: 32px; }
+  .lb-statement { text-wrap: balance; }   /* four full-width lines: even them out */
+  .lb-notes { padding-top: 28px; border-top: 1px solid var(--line); }
+  .lb-notes ol { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 48px; }
 }
-/* below 900 the chart does not fit: a vertical trail behind the lead, each link running ring to ring */
-@media (max-width: 899px) {
-  .lb-formation { width: auto; height: auto; margin: 18px 0 0; }
-  .lb-chart { display: none; }
-  .lb-skills { display: grid; gap: 16px; }
-  .lb-skills li, .lb-skills .lb-lead { --r: 18px; position: relative; left: auto; top: auto; width: auto; height: auto; display: flex; align-items: flex-start; gap: 14px; }
-  .lb-skills li:not(:last-child)::after { content: ""; position: absolute; left: 17.5px; top: 36px; bottom: -16px; width: 1px; background: var(--muted); }
-  .lb-skills svg, .lb-skills .lb-lead svg { position: relative; left: auto; top: auto; flex: none; padding: 6px; stroke-width: 1.6; }
-  .lb-skills span, .lb-skills .lb-lead span { position: static; width: auto; margin-top: 1px; transform: none; text-align: left; white-space: normal; line-height: 20px; }
-  .lead-band:is(:hover, :focus-within) .lb-skills svg { transform: none; }
-}
-@media (min-width: 760px) and (max-width: 899px) {
-  .lb-body { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; }
-}
-/* below 1100 the stages wrap, so the bracket keeps only its ends and its label */
-@media (max-width: 1099px) {
-  .lb-span span { visibility: hidden; }
+@media (max-width: 759px) {
+  .lead-band { margin-top: 40px; }
+  .lb-main { padding: 28px 0 28px; }
+  .lb-statement { line-height: 1.24; }
+  .lb-notes { padding: 24px 0 32px; border-top: 1px solid var(--line); }
 }
 
 @media (max-width: 1099px) {
@@ -812,11 +779,6 @@ html:not(.js) .mission-art svg { display: none; }
   .stage:nth-child(n+2) { border-top: 1px solid var(--line); }
   .stage::before { content: ""; position: absolute; left: -32px; top: 32px; width: 7px; height: 7px; border: 1px solid var(--muted); border-radius: 50%; background: var(--bg); transition: background .3s, border-color .3s; }
   .stage.in::before, .stage:is(:hover, :focus-within)::before { background: var(--accent); border-color: var(--accent); }
-  /* lead band: bracket becomes a label row */
-  .lead-band { --lb-pad: 20px; }
-  .lb-span { display: flex; height: auto; padding: 14px var(--lb-pad) 12px; }
-  .lb-span span { display: none; }
-  .lb-span b { position: static; transform: none; padding: 0; }
 }
 
 /* ── Contact ── */
@@ -1100,9 +1062,8 @@ html:not(.js) .mission-art svg { display: none; }
   .project.feature:is(:hover, :focus-within) .mission-art .drone { transform: none; }
   .pipe-track::before { transform: none; transition: none; }
   .pt-node i, .stage::before, .stage-skills li::before, .proof a { transition: none; }
-  .lb-skills svg, .lb-skills span::before, .lb-draw path, .lb-sortie, .lb-sortie * { transition: none; }
-  .lead-band:is(:hover, :focus-within) .lb-skills svg, .lb-sortie:is(:hover, :has(a:focus-visible)) { transform: none; }
-  .lead-band:is(:hover, :focus-within) :is(.lb-lead circle, .lb-range) { animation: none; }
+  .js .lead-band::before { transform: none; transition: none; }
+  .lb-skills span, .lb-notes a { transition: none; }
   .pt-node i { background: var(--accent); border-color: var(--accent); }
   .stage::before { background: var(--accent); border-color: var(--accent); }
   .btn, .copy, .brief, .contact .arr { transition: none; }

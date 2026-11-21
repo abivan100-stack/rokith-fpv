@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
-  <link rel="stylesheet" href="styles.css?v=20261121h">
+  <link rel="stylesheet" href="styles.css?v=20261121i">
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -498,46 +498,28 @@
           </li>
         </ol>
       </div>
-      <!-- Lead band: a span bracket over all four stage columns, the lead skills as a V formation, and two sortie cards -->
+      <!-- Lead band: the section's closing statement. The six lead skills are a real list set inline in one sentence;
+           the commas, "and" and full stop are drawn by CSS with empty alt text, so a screen reader hears the list once. -->
       <div class="lead-band reveal">
-        <div class="lb-span" aria-hidden="true">
-          <span>01</span><span>02</span><span>03</span><span>04</span>
-          <b>Lead · all four stages</b>
+        <div class="lb-main">
+          <h3 class="sec-no">All the way through: lead</h3>
+          <div class="lb-statement">
+            <span class="lb-lede">One thread runs through all four stages:</span>
+            <ul class="lb-skills" role="list">
+              <li><span>project leadership</span></li>
+              <li><span>cross&#8209;functional team collaboration</span></li>
+              <li><span>innovation management</span></li>
+              <li><span>strategic problem solving</span></li>
+              <li><span>technical operations</span></li>
+              <li><span>STEM&nbsp;initiatives</span></li></ul><span class="lb-refs"><a href="#lb-n1" aria-label="Note 1">1</a><a href="#lb-n2" aria-label="Note 2">2</a></span>
+          </div>
         </div>
-        <div class="lb-body">
-          <div class="lb-flight">
-            <h3 class="sec-no">All the way through: lead</h3>
-            <div class="lb-formation">
-              <!-- chart drawn in px around the lead's centre (0 0): wingmen step 72 across, 84 back; links run ring edge to ring edge -->
-              <svg class="lb-chart" viewBox="-342 -92 653 330" aria-hidden="true">
-                <path class="lb-arc" d="M-72 84A110.634 110.634 0 0 0 72 84"/>
-                <circle class="lb-range" r="32"/>
-                <g class="lb-hdg"><path d="M300.5-48v-30m-4.5 7 4.5-8 4.5 8"/><path d="M296-48h9"/><text x="288" y="-58">Direction of flight</text></g>
-                <g class="lb-links"><path d="M-15.619 18.222-60.286 70.333"/><path d="M15.619 18.222 60.286 70.333"/><path d="M-83.714 97.667-132.286 154.333"/><path d="M83.714 97.667 132.286 154.333"/><path d="M0 24v126"/></g>
-                <g class="lb-links lb-draw"><path pathLength="1" d="M-15.619 18.222-60.286 70.333"/><path pathLength="1" d="M15.619 18.222 60.286 70.333"/><path pathLength="1" class="lb-k2" d="M-83.714 97.667-132.286 154.333"/><path pathLength="1" class="lb-k2" d="M83.714 97.667 132.286 154.333"/><path pathLength="1" class="lb-ks" d="M0 24v126"/></g>
-              </svg>
-              <svg width="0" height="0" class="lb-defs" aria-hidden="true"><symbol id="lb-quad" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/><circle cx="5.5" cy="5.5" r="3"/><circle cx="18.5" cy="5.5" r="3"/><circle cx="5.5" cy="18.5" r="3"/><circle cx="18.5" cy="18.5" r="3"/></symbol></svg>
-              <ul class="lb-skills">
-                <li class="lb-lead"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/><circle cx="5.5" cy="5.5" r="3"/><circle cx="18.5" cy="5.5" r="3"/><circle cx="5.5" cy="18.5" r="3"/><circle cx="18.5" cy="18.5" r="3"/></svg><span>Project leadership</span></li>
-                <li class="lb-l1"><svg aria-hidden="true"><use href="#lb-quad"/></svg><span>Cross-functional team collaboration</span></li>
-                <li class="lb-r1"><svg aria-hidden="true"><use href="#lb-quad"/></svg><span>Innovation management</span></li>
-                <li class="lb-l2"><svg aria-hidden="true"><use href="#lb-quad"/></svg><span>Strategic problem solving</span></li>
-                <li class="lb-r2"><svg aria-hidden="true"><use href="#lb-quad"/></svg><span>Technical operations</span></li>
-                <li class="lb-slot"><svg aria-hidden="true"><use href="#lb-quad"/></svg><span>STEM initiatives</span></li>
-              </ul>
-            </div>
-          </div>
-          <div class="lb-sorties">
-            <p class="mono-label">Used in</p>
-            <div class="lb-sortie">
-              <p>Agrifly · Precision agriculture</p>
-              <a href="#projects">Agrifly: led from idea to international silver and a US$5,000 investment</a>
-            </div>
-            <div class="lb-sortie">
-              <p>BluJ Aerospace · May 2024 internship</p>
-              <a href="#projects">BluJ Aerospace: electronics and integration on a passenger VTOL</a>
-            </div>
-          </div>
+        <div class="lb-notes">
+          <p class="mono-label">Used in</p>
+          <ol>
+            <li id="lb-n1"><p>Agrifly<span class="lb-sep"> · </span>Precision agriculture</p><a href="#projects">Agrifly: led from idea to international silver and a US$5,000 investment</a></li>
+            <li id="lb-n2"><p>BluJ Aerospace<span class="lb-sep"> · </span>May 2024 internship</p><a href="#projects">BluJ Aerospace: electronics and integration on a passenger VTOL</a></li>
+          </ol>
         </div>
       </div>
     </section>
@@ -694,6 +676,6 @@
     <p>Chennai, India</p>
   </footer>
 
-  <script src="script.js?v=20261121h"></script>
+  <script src="script.js?v=20261121i"></script>
 </body>
 </html>
