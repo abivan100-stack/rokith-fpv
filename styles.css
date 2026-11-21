@@ -621,7 +621,7 @@ html:not(.js) .mission-art svg { display: none; }
 .stage:first-child { padding-left: 0; border-left: 0; }
 .stage:last-child { padding-right: 0; }
 @media (min-width: 760px) {
-  /* subgrid keeps headings, lists and "Proven in" on shared rows so the proof blocks line up */
+  /* subgrid keeps headings, lists and "Used in" on shared rows so the proof blocks line up */
   .stage { display: grid; grid-row: span 3; grid-template-rows: subgrid; row-gap: 0; }
   .stage .proof { align-self: start; margin-top: 0; }
 }
@@ -644,7 +644,7 @@ html:not(.js) .mission-art svg { display: none; }
 .lead-band .stage-skills { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); column-gap: 24px; align-self: start; align-content: start; }
 .lead-band .proof { margin-top: 12px; padding-top: 14px; }
 @media (min-width: 1100px) {
-  /* stacked like the stage cards: skills 3 across, then "Proven in" with its links flowing left to right */
+  /* stacked like the stage cards: skills 3 across, then "Used in" with its links flowing left to right */
   .lead-band .stage-skills { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .lead-band .proof { display: flex; flex-wrap: wrap; align-items: flex-start; column-gap: 40px; }
   .lead-band .proof .mono-label { flex-basis: 100%; }
