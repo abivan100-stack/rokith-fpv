@@ -186,10 +186,8 @@ a { color: inherit; }
 .hero-copy { container-type: inline-size; }
 .hero h1 {
   /* sized to the column (cqi), not the viewport, so a wider or narrower display face still fits beside the airspace */
-  font: 800 clamp(48px, 15cqi, 120px)/.88 var(--display);
-  font-stretch: 118%;
-  letter-spacing: -.03em;
-  text-transform: uppercase;
+  font: 500 clamp(52px, 16cqi, 132px)/.92 var(--head);   /* the site's heading face, as the largest step of the scale */
+  letter-spacing: -.025em;
   margin: 22px 0 28px;
 }
 .hero-lede { max-width: 34em; font: 400 clamp(18px, 1.6vw, 21px)/1.5 var(--display); text-wrap: pretty; }
@@ -226,7 +224,7 @@ a { color: inherit; }
 .hl-meta { display: flex; justify-content: space-between; gap: 12px; font: 500 11px/1.4 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 .hl-wp { color: var(--accent-ink); white-space: nowrap; }
 .hl-wp::after { content: " →"; transition: margin .2s ease; }
-.hl-title { margin-top: 4px; font: 600 17px/1.3 var(--display); font-stretch: 105%; }
+.hl-title { margin-top: 4px; font: 500 var(--fs-h4)/1.2 var(--head); }
 .hl-desc { font-size: 14.5px; line-height: 1.45; color: var(--muted); }
 
 @media (max-width: 899px) {
