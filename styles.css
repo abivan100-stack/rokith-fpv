@@ -202,7 +202,7 @@ a { color: inherit; }
 
 /* 1. The build */
 .build { position: relative; margin-top: clamp(8px, 2vw, 24px); }
-.js .build { height: 580vh; }   /* scroll distance for the assembly: about 60vh of scroll per step */
+.js .build { height: 520vh; }   /* scroll distance for the assembly: about 53vh of scroll per step */
 .build-stage {
   display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
   gap: clamp(24px, 5vw, 72px); align-items: center;
