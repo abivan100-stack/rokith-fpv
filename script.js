@@ -402,10 +402,340 @@
     fig.addEventListener('mouseleave', function () { if (landed) setSpin(set, false); });
   })();
 
-  /* ── Flight log figures: their CSS loops run only while the plate is on screen ── */
-  document.querySelectorAll('.log-fig').forEach(function (fig) {
-    if (!('IntersectionObserver' in window)) { fig.classList.add('live'); return; }
-    new IntersectionObserver(function (en) { fig.classList.toggle('live', en[en.length - 1].isIntersecting); }).observe(fig);
+  /* ── Fleet, part 3: the kit as a loop ──
+        Radio, aircraft and goggles stand on stations along a track on the ground plane, so the track is drawn in
+        u, v like everything else and its corners come out as the same flattened ellipses as the pads. The ground
+        station branches off the aircraft. The drawing is laid out in CSS pixels from the stage's width and the
+        measured tags, and redrawn when that width changes:
+        >= 1100px the loop with every tag beside its device; 760-1099px the loop with the tags in a grid below;
+        phone a vertical spine, each device level with its tag. The motion is CSS (offset-path packets and a
+        translating dash pattern), paused unless .live; the quad's props idle while .live. */
+  (function () {
+    var stage = $('kit-stage'), art = $('kit-art');
+    if (!stage || !art) return;
+    var li = {};
+    stage.querySelectorAll('.kit-loop > li').forEach(function (el) { li[el.dataset.kit] = el; });
+    var phone = matchMedia('(max-width: 759px)'), wide = matchMedia('(min-width: 1100px)');
+    var Q = quad(1, false), set = null;
+    var motion = !reduceMotion && CSS.supports('offset-path', 'path("M0 0L1 1")');
+    art.classList.toggle('k-still', !motion);                              // no motion path, or reduced motion: marks hold still mid-link
+    function pt(p) { return f(p[0]) + ' ' + f(p[1]); }
+    function line(pts) { return 'M' + pts.map(pt).join('L'); }
+    function g(cls, body, kit, tf) { return '<g class="' + cls + '"' + (kit ? ' data-kit="' + kit + '"' : '') + (tf ? ' transform="' + tf + '"' : '') + '>' + body + '</g>'; }
+    function ring(F, cx, cy, r, t, cls) {                                    // a circle drawn on a tilted face
+      var pts = [];
+      for (var i = 0; i < 28; i++) { var a = i / 28 * Math.PI * 2; pts.push(F(cx + r * Math.cos(a), cy + r * Math.sin(a), t)); }
+      return poly(pts, cls);
+    }
+    // A slab on a tilted face F(x, y, t): sides that face the viewer, then the front.
+    function slab(F, outline, t0, t1) {
+      function area(p) { var a = 0; for (var i = 0; i < p.length; i++) { var q = p[(i + 1) % p.length]; a += p[i][0] * q[1] - q[0] * p[i][1]; } return a; }
+      var front = outline.map(function (q) { return F(q[0], q[1], t1); }), sg = area(front) > 0, s = '';
+      outline.forEach(function (a, i) {
+        var b = outline[(i + 1) % outline.length], face = [F(b[0], b[1], t1), F(a[0], a[1], t1), F(a[0], a[1], t0), F(b[0], b[1], t0)];
+        if ((area(face) > 0) === sg) s += poly(face, 'side');
+      });
+      return s + poly(front, 'top');
+    }
+
+    // A convex outline extruded from z0 to z1 with a smooth side: the faces turned toward the viewer are drawn as one
+    // band (so rounded ends don't show every facet), then the top.
+    function smooth(uv, z0, z1) {
+      var n = uv.length, vis = [], i, s = -1, cu = 0, cv = 0;
+      uv.forEach(function (q) { cu += q[0]; cv += q[1]; }); cu /= n; cv /= n;
+      for (i = 0; i < n; i++) {                                              // does the outward normal point toward the viewer (+u)?
+        var a = uv[i], b = uv[(i + 1) % n], nu = b[1] - a[1], nv = a[0] - b[0];
+        if (nu * ((a[0] + b[0]) / 2 - cu) + nv * ((a[1] + b[1]) / 2 - cv) < 0) nu = -nu;
+        vis.push(nu > 1e-6);
+      }
+      for (i = 0; i < n; i++) if (vis[i] && !vis[(i + n - 1) % n]) s = i;
+      var top = [], bot = [];
+      if (s >= 0) for (i = s; ; i = (i + 1) % n) {
+        top.push(P(uv[i][0], uv[i][1], z1)); bot.push(P(uv[i][0], uv[i][1], z0));
+        if (!vis[i]) break;
+      }
+      return (top.length ? poly(top.concat(bot.reverse()), 'side') : '') + poly(uv.map(function (q) { return P(q[0], q[1], z1); }), 'top');
+    }
+    function turn(a) { var c = Math.cos(a), s = Math.sin(a); return function (u, v) { return [u * c - v * s, u * s + v * c]; }; }
+
+    // The devices, each standing on the ground at its own origin (model units: the quad's 1 = a 5-inch).
+    function radio() {
+      // held at the pilot's angle and turned a little toward the aircraft: the face leans back about 35 degrees
+      // from upright; x across it, y up it, t out of it
+      var c = Math.cos(.98), sn = Math.sin(.98), R = turn(.26);
+      function F(x, y, t) { var r = R(12 - y * c + t * sn, x); return P(r[0], r[1], 4 + y * sn + t * c); }
+      var s = '', top = 54;
+      // antenna and shoulder switches first: the body hides their feet
+      var a0 = F(0, top - 3, -6), a1 = F(0, top + 7, -8), w = 3.2;
+      s += '<path class="ant" d="M' + pt(a0) + 'L' + pt(a1) + '"/>';
+      s += poly([F(-w, top + 6, -8), F(w, top + 6, -8), F(w, top + 27, -10), F(0, top + 30, -10.5), F(-w, top + 27, -10)], 'side');
+      [-1, 1].forEach(function (k) {
+        var b = F(k * 28, top - 1, -4), t = F(k * 30, top + 8, -4);
+        s += '<path class="k-stick k-thin" d="M' + pt(b) + 'L' + pt(t) + '"/><circle class="top" cx="' + f(t[0]) + '" cy="' + f(t[1]) + '" r="2.2"/>';
+      });
+      s += slab(F, [[-18, 0], [-36, 0], [-42, 9], [-42, 44], [-35, top], [35, top], [42, 44], [42, 9], [36, 0], [18, 0], [12, 7], [-12, 7]], -12, 0);
+      s += poly([F(-12, 32, 0), F(12, 32, 0), F(12, 46, 0), F(-12, 46, 0)], 'k-screen');                  // the screen
+      s += '<path class="k-lcd" d="M' + pt(F(-8, 41.5, 0)) + 'L' + pt(F(2, 41.5, 0)) + 'M' + pt(F(-8, 37, 0)) + 'L' + pt(F(6, 37, 0)) + '"/>';
+      [-1, 1].forEach(function (k) {
+        s += ring(F, k * 24, 23, 11.5, 0, 'side') + ring(F, k * 24, 23, 7.5, .1, 'top');
+        var b = F(k * 24, 23, 0), t = F(k * 24 + (k < 0 ? 0 : 2), 23 + (k < 0 ? 4 : -1), 15);   // left stick: a little throttle
+        s += '<path class="k-stick" d="M' + pt(b) + 'L' + pt(t) + '"/><circle class="top" cx="' + f(t[0]) + '" cy="' + f(t[1]) + '" r="3.4"/>';
+      });
+      s += ring(F, -6, 13, 2, 0, 'top') + ring(F, 6, 13, 2, 0, 'top');
+      return s;
+    }
+    function goggles() {
+      // turned a little toward the aircraft, so the front, one end and the foam at the back all show
+      var s = '', U = 12, V = 34, z0 = 4, z1 = 27, R = turn(-.34), i, j;
+      function G(u, v, z) { var r = R(u, v); return P(r[0], r[1], z); }
+      function box(u0, u1, v0, r) {                                          // a rounded rectangle in u, v, turned
+        var o = [];
+        [[u1 - r, v0 - r, 0], [u0 + r, v0 - r, 1], [u0 + r, -v0 + r, 2], [u1 - r, -v0 + r, 3]].forEach(function (c) {
+          for (var j = 0; j <= 5; j++) { var a = c[2] * Math.PI / 2 + j / 5 * Math.PI / 2; o.push(R(c[0] + r * Math.cos(a), c[1] + r * Math.sin(a))); }
+        });
+        return o;
+      }
+      // the strap: a band from the ends round the back of the head
+      var top = [], bot = [];
+      for (i = 0; i <= 32; i++) {
+        var t = i / 32 * Math.PI, u = -U - 3 - 28 * Math.sin(t), v = (V - 5) * Math.cos(t);
+        top.push(G(u, v, 19)); bot.push(G(u, v, 12));
+      }
+      s += '<g class="k-foam">' + poly(top.concat(bot.reverse()), 'side') + smooth(box(-U - 6, -U + 2, V - 3, 6), z0 + 2, z1 - 2) + '</g>';
+      s += smooth(box(-U, U, V, 9), z0, z1);
+      // faceplate: an inset panel on the front, a nose cut-out under it, a status light
+      var fp = [];
+      for (j = 0; j <= 16; j++) { var b = j / 16; fp.push(G(U, -V + 11 + b * (2 * V - 22), z1 - 4 - 1.5 * Math.sin(b * Math.PI))); }
+      for (j = 16; j >= 0; j--) { b = j / 16; fp.push(G(U, -V + 11 + b * (2 * V - 22), z0 + 8 + 1.5 * Math.sin(b * Math.PI))); }
+      s += poly(fp, 'k-plate');
+      s += '<path class="k-nose" d="M' + pt(G(U, -8, z0)) + 'Q' + pt(G(U, 0, z0 + 14)) + ' ' + pt(G(U, 8, z0)) + 'Z"/>';
+      var led = G(U, V - 16, z1 - 9);
+      s += '<circle class="k-led" cx="' + f(led[0]) + '" cy="' + f(led[1]) + '" r="1.8"/>';
+      [-1, 1].forEach(function (k) {                                         // two receiver antennas on top
+        var p0 = G(-4, k * (V - 9), z1), p1 = G(-8, k * (V - 3), z1 + 16);
+        s += '<path class="ant" d="M' + pt(p0) + 'L' + pt(p1) + '"/><circle class="ant-tip" cx="' + f(p1[0]) + '" cy="' + f(p1[1]) + '" r="2.1"/>';
+      });
+      return s;
+    }
+    function laptop() {
+      var s = prism([[-16, -27], [-16, 27], [16, 27], [16, -27]], 0, 2.6);
+      s += poly([P(-11, -22, 2.6), P(-11, 22, 2.6), P(4, 22, 2.6), P(4, -22, 2.6)], 'k-keys');
+      s += poly([P(7, -7, 2.6), P(7, 7, 2.6), P(13, 7, 2.6), P(13, -7, 2.6)], 'k-keys');
+      function L(a, b) { return P(-16 - 10 * b, -27 + 54 * a, 2.6 + 36 * b); }   // a across the lid, b up it
+      s += poly([L(0, 0), L(1, 0), L(1, 1), L(0, 1)], 'top');
+      s += poly([L(.06, .1), L(.94, .1), L(.94, .92), L(.06, .92)], 'k-screen');
+      var grid = '', i;
+      for (i = 1; i < 6; i++) grid += 'M' + pt(L(.06 + .88 * i / 6, .1)) + 'L' + pt(L(.06 + .88 * i / 6, .92));
+      for (i = 1; i < 4; i++) grid += 'M' + pt(L(.06, .1 + .82 * i / 4)) + 'L' + pt(L(.94, .1 + .82 * i / 4));
+      s += '<path class="k-grid" d="' + grid + '"/>';
+      // a mission on the map: home, then waypoints joined by the planned route
+      var wp = [[.2, .3], [.38, .74], [.56, .34], [.74, .76], [.84, .4]].map(function (q) { return L(q[0], q[1]); });
+      s += '<path class="k-route" d="' + line(wp) + '"/>';
+      wp.forEach(function (p, j) { s += j ? '<circle class="k-wp" cx="' + f(p[0]) + '" cy="' + f(p[1]) + '" r="1.9"/>' : '<rect class="k-home" x="' + f(p[0] - 2.6) + '" y="' + f(p[1] - 2.6) + '" width="5.2" height="5.2"/>'; });
+      return s;
+    }
+    function quadBody() { return '<g class="k-quad">' + Q.frame + Q.motors + Q.receiver + Q.stack + Q.camera + Q.props + '</g>'; }
+    // Each device: its station disc's radius (model units), its size on the loop, its drawing, how high it floats
+    // and how tall it stands.
+    var DEV = {
+      hands: { R: 50, s: 1, body: radio, lift: 0, top: 100 },
+      air: { R: 88, s: .58, body: quadBody, lift: 30, top: 80 },
+      eyes: { R: 46, s: 1.05, body: goggles, lift: 0, top: 50 },
+      ground: { R: 42, s: 1.08, body: laptop, lift: 0, top: 44 }
+    };
+    // A device on its station: a flat disc on the ground, a soft shadow, the drawing, and a hit area for pointing.
+    function device(kit, x, y, k) {
+      var d = DEV[kit], hw = d.R * KX * k, h = (d.top + d.lift) * k;
+      return g('k-dev', '<rect class="k-hit" x="' + f(-hw) + '" y="' + f(-h) + '" width="' + f(hw * 2) + '" height="' + f(h + d.R * KY * k) + '"/>' +
+        g('qa', flatEllipse(0, 0, 0, d.R, 'k-station') + flatEllipse(0, 0, 0, d.R * .6, 'shadow') +
+          (d.lift ? '<g transform="translate(0 ' + f(-d.lift) + ')">' + d.body() + '</g>' : d.body()), '', 'scale(' + k + ')'),
+        kit, 'translate(' + f(x) + ' ' + f(y) + ')');
+    }
+
+    // Polylines: length, and the point and heading at a distance along them.
+    function along(pts, d) {
+      for (var i = 1; i < pts.length; i++) {
+        var a = pts[i - 1], b = pts[i], l = Math.hypot(b[0] - a[0], b[1] - a[1]);
+        if (d <= l || i === pts.length - 1) { var t = Math.min(1, d / l); return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, Math.atan2(b[1] - a[1], b[0] - a[0])]; }
+        d -= l;
+      }
+    }
+    function len(pts) { var n = 0; for (var i = 1; i < pts.length; i++) n += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); return n; }
+    function arrow(p, cls) {
+      var c = Math.cos(p[2]), s = Math.sin(p[2]), L = 9, W = 4.2;
+      return poly([[p[0] + c * L / 2, p[1] + s * L / 2], [p[0] - c * L / 2 - s * W, p[1] - s * L / 2 + c * W], [p[0] - c * L / 2 + s * W, p[1] - s * L / 2 - c * W]], 'k-arrow' + (cls ? ' ' + cls : ''));
+    }
+    // A link: a band (a dashed lane for the return) with an arrowhead where it reaches the next device, and its moving
+    // marks on an offset-path along the centre line. start and stop trim the link to where it leaves and reaches each
+    // device's outline, so nothing shows through a device when it is dimmed. The marks are phased so that the 0 s frame
+    // (reduced motion, no offset-path support, off screen) spaces them evenly along the link.
+    var T = 6;
+    function locate(c, d) {                                                  // segment index and fraction at distance d
+      for (var i = 1; i < c.length; i++) { var l = Math.hypot(c[i][0] - c[i - 1][0], c[i][1] - c[i - 1][1]); if (d <= l || i === c.length - 1) return [i, Math.min(1, d / l)]; d -= l; }
+    }
+    function cut(pts, a, b) {                                                // the part of pts between two locate() results
+      function at(q) { var p = pts[q[0] - 1], n = pts[q[0]]; return [p[0] + (n[0] - p[0]) * q[1], p[1] + (n[1] - p[1]) * q[1]]; }
+      return [at(a)].concat(pts.slice(a[0], b[0]), [at(b)]);
+    }
+    function link(kit, c0, inner, outer, start, stop, mark, n) {
+      var ret = kit === 'loop', s = '', a = locate(c0, start), b = locate(c0, len(c0) - stop);
+      var c = cut(c0, a, b), I = cut(inner, a, b), O = outer === inner ? I : cut(outer, a, b), L = len(c), path = line(c);
+      if (!ret) s += '<path class="k-band" d="' + line(O.concat(I.slice().reverse())) + 'Z"/>';
+      s += '<path class="' + (ret ? 'k-ret' : 'k-edge') + '" d="' + line(I) + (O !== I ? line(O) : '') + '"/>';
+      s += arrow(along(c, L - 4.5), ret ? 'ret' : '');
+      for (var i = 0; i < n; i++) {
+        var at = (i + .5) / n, p = along(c, L * at);
+        s += '<g class="' + (ret ? 'k-ret-run' : 'k-run') + '"' + (motion
+          ? ' style="offset-path: path(\'' + path + '\'); --d: ' + f(-at * T) + 's"'
+          : ' transform="translate(' + pt(p) + ') rotate(' + f(p[2] * 180 / Math.PI) + ')"') + '>' + mark + '</g>';
+      }
+      return g('k-link', s, kit);
+    }
+    var PKT = '<circle class="k-pkt" r="3.2"/>';
+    var FRAME = '<rect class="k-frame" x="-5.5" y="-4" width="11" height="8" rx="1.2"/>';
+    var PULSE = '<circle class="k-pulse" r="4"/><circle class="k-pulse" cx="-7.5" r="2.7" opacity=".6"/><circle class="k-pulse" cx="-13.5" r="1.7" opacity=".35"/>';
+    // Two lanes of dashes running opposite ways, clipped to the link, with an arrowhead at each end: x0,y0 -> x1,y1.
+    function mapLink(x0, y0, x1, y1) {
+      var dx = x1 - x0, dy = y1 - y0, l = Math.hypot(dx, dy), ux = dx / l, uy = dy / l, nx = -uy * 4.5, ny = ux * 4.5, per = 8;
+      var s = '<clipPath id="kit-clip"><path d="M' + f(x0 + nx * 2) + ' ' + f(y0 + ny * 2) + 'L' + f(x1 + nx * 2) + ' ' + f(y1 + ny * 2) + 'L' + f(x1 - nx * 2) + ' ' + f(y1 - ny * 2) + 'L' + f(x0 - nx * 2) + ' ' + f(y0 - ny * 2) + 'Z"/></clipPath>';
+      [1, -1].forEach(function (k) {
+        var a = [x0 + nx * k - ux * per, y0 + ny * k - uy * per], b = [x1 + nx * k + ux * per, y1 + ny * k + uy * per];
+        s += '<g clip-path="url(#kit-clip)"><path class="k-map k-flow" style="--fx: ' + f(ux * per * k) + 'px; --fy: ' + f(uy * per * k) + 'px" d="M' + pt(a) + 'L' + pt(b) + '"/></g>';
+      });
+      s += arrow([x1 + nx - ux * 4, y1 + ny - uy * 4, Math.atan2(dy, dx)]) + arrow([x0 - nx + ux * 4, y0 - ny + uy * 4, Math.atan2(-dy, -dx)]);
+      return g('k-link', s, 'map');
+    }
+    function place(kit, x, y, ax, ay, al) {
+      var st = li[kit].style;
+      st.left = f(x) + 'px'; st.top = f(y) + 'px';
+      st.transform = 'translate(' + ax + ', ' + ay + ')';
+      if (al) { st.alignItems = al; st.textAlign = al === 'flex-end' ? 'right' : al === 'center' ? 'center' : 'left'; }
+    }
+    function clear() { Object.keys(li).forEach(function (k) { li[k].removeAttribute('style'); }); }
+
+    // Desktop and tablet: the loop. The track's centre line is a rounded rectangle in u, v, run clockwise from the radio;
+    // track(d) gives it as three runs (control, video, return), offset d outward.
+    var Wt = 9;                                                              // half the track width
+    function track(O, U0, U1, V0, V1, RR, d) {
+      function S(u, v, nu, nv) { var p = P(u + nu * d, v + nv * d, 0); return [p[0] + O[0], p[1] + O[1]]; }
+      function arc(cu, cv, fn, out) { for (var i = 1; i < 12; i++) { var n = fn(i / 12 * Math.PI / 2); out.push(S(cu + n[0] * RR, cv + n[1] * RR, n[0], n[1])); } }
+      var a = [S(0, V0, 0, -1), S(U0 + RR, V0, 0, -1)];
+      arc(U0 + RR, V0 + RR, function (t) { return [-Math.sin(t), -Math.cos(t)]; }, a);
+      a.push(S(U0, V0 + RR, -1, 0), S(U0, 0, -1, 0));
+      var b = [S(U0, 0, -1, 0), S(U0, V1 - RR, -1, 0)];
+      arc(U0 + RR, V1 - RR, function (t) { return [-Math.cos(t), Math.sin(t)]; }, b);
+      b.push(S(U0 + RR, V1, 0, 1), S(0, V1, 0, 1));
+      var c = [S(0, V1, 0, 1), S(U1 - RR, V1, 0, 1)];
+      arc(U1 - RR, V1 - RR, function (t) { return [Math.sin(t), Math.cos(t)]; }, c);
+      c.push(S(U1, V1 - RR, 1, 0), S(U1, V0 + RR, 1, 0));
+      arc(U1 - RR, V0 + RR, function (t) { return [Math.cos(t), -Math.sin(t)]; }, c);
+      c.push(S(U1 - RR, V0, 0, -1), S(0, V0, 0, -1));
+      return [a, b, c];
+    }
+    function drawLoop() {
+      var full = wide.matches, W = stage.clientWidth, k = Math.min(1.25, Math.max(.95, W / 900));
+      var sc = function (kit) { return DEV[kit].s * k; };
+      var half = function (kit) { return DEV[kit].R * KX * sc(kit); }, low = function (kit) { return DEV[kit].R * KY * sc(kit); };
+      var tw = function (kit) { return full ? li[kit].offsetWidth : 0; }, th = function (kit) { return full ? li[kit].offsetHeight : 0; };
+      // side: radio and goggles tags beside their devices. Below about 1060px of stage that squeezes the loop, so the
+      // three device tags run in a row across the top instead, each over its own device.
+      var side = full && W >= 1060, gap = 28;
+      var xH = (side ? tw('hands') + gap : 24) + half('hands'), xE = W - (side ? tw('eyes') + gap : 24) - half('eyes');
+      var head = side ? th('air') : full ? Math.max(th('hands'), th('air'), th('eyes')) : 0;
+      var OX = (xH + xE) / 2, yA = (full ? head + 22 : 40) + (DEV.air.top + DEV.air.lift) * sc('air');
+      var Hu = 146, RR = 64, V0 = (xH - OX) / KX, OY = yA + Hu * KY;
+      var C = [0, -Wt, Wt].map(function (d) { return track([OX, OY], -Hu, Hu, V0, -V0, RR, d); });
+      // the ground station sits in the infield, down and to the left of the aircraft, so its tag and the mapping
+      // link's name both have room on the right
+      var hands = [xH, OY], air = [OX, yA], eyes = [xE, OY], ground = [OX - (xE - xH) * .17, OY + 34 * k];
+      var m0 = [air[0] - half('air') * .3, air[1] + low('air') * .92], m1 = [ground[0] + half('ground') * .86, ground[1] - low('ground') * 1.62];   // ends just clear of the lid
+      var yB = OY + Hu * KY, H = yB + 18 + li.loop.offsetHeight;
+      var s = link('loop', C[0][2], C[1][2], C[2][2], low('eyes'), low('hands') + 3, PULSE, 1) +
+        link('control', C[0][0], C[1][0], C[2][0], 62 * sc('hands'), half('air') + 3, PKT, 3) +
+        link('video', C[0][1], C[1][1], C[2][1], half('air'), 38 * sc('eyes'), FRAME, 4) +
+        mapLink(m0[0], m0[1], m1[0], m1[1]);
+      s += device('air', air[0], air[1], sc('air')) + device('hands', hands[0], hands[1], sc('hands')) +
+        device('eyes', eyes[0], eyes[1], sc('eyes')) + device('ground', ground[0], ground[1], sc('ground'));
+      // tablet: the tags sit in a grid under the drawing, so numbered callouts key each device to its tag
+      if (!full) [['hands', hands, '01'], ['air', air, '02'], ['eyes', eyes, '03'], ['ground', ground, '04']].forEach(function (c) {
+        var x = c[1][0] - half(c[0]) * .78, y = c[1][1] + low(c[0]) * .78;
+        s += g('k-callout', '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="11"/><text x="' + f(x) + '" y="' + f(y + 3.6) + '">' + c[2] + '</text>', c[0]);
+      });
+      art.setAttribute('viewBox', '0 0 ' + f(W) + ' ' + f(H));
+      art.style.height = f(H) + 'px';
+      art.innerHTML = s;
+      if (full) {
+        if (side) {
+          place('hands', xH - half('hands') - gap, OY - 8, '-100%', '-50%');
+          place('eyes', xE + half('eyes') + gap, OY - 8, '0', '-50%');
+        } else {
+          place('hands', 0, 0, '0', '0');
+          place('eyes', W, 0, '-100%', '0');
+        }
+        place('air', OX, 0, '-50%', '0');
+        place('ground', ground[0] + half('ground') + 18, ground[1] - 8, '0', '-50%');
+      }
+      // link names sit on their links: above the top run, either side of the aircraft
+      var cornerL = OX + (V0 + RR) * KX, cornerR = OX - (V0 + RR) * KX, top = yA - Wt * KY - 10;
+      place('control', (cornerL + OX - half('air')) / 2, top, '-50%', '-100%', 'center');
+      place('video', (cornerR + OX + half('air')) / 2, top, '-50%', '-100%', 'center');
+      place('map', OX - half('air') - 6, yA + Wt * KY + 10, '-100%', '0', 'flex-end');   // above the laptop, clear of the aircraft's station
+      place('loop', OX, yB + 18, '-50%', '0', 'center');
+    }
+    // Phone: a vertical spine down the drawn column, devices level with their tags, ground branching off the aircraft;
+    // the return runs back up the column's left edge.
+    function drawSpine() {
+      art.style.height = '';
+      var col = art.getBoundingClientRect().width, H = stage.offsetHeight, SX = 60, RX = 4, GX = 106, w = 6;
+      function mid(kit) { return li[kit].offsetTop + li[kit].offsetHeight / 2; }
+      var yH = mid('hands') + 26, yA = mid('air') + 16, yE = mid('eyes') + 20, yG = mid('ground') + 16;
+      function band(x, y0, y1) { return [[[x - w, y0], [x - w, y1]], [[x + w, y0], [x + w, y1]]]; }
+      var c1 = band(SX, yH, yA), c2 = band(SX, yA, yE), rr = 12, q = 8, back = [[SX, yE], [RX + rr, yE]], i, t;
+      for (i = 1; i < q; i++) { t = i / q * Math.PI / 2; back.push([RX + rr - rr * Math.sin(t), yE - rr + rr * Math.cos(t)]); }
+      back.push([RX, yE - rr], [RX, yH + rr]);
+      for (i = 1; i < q; i++) { t = i / q * Math.PI / 2; back.push([RX + rr - rr * Math.cos(t), yH + rr - rr * Math.sin(t)]); }
+      back.push([RX + rr, yH], [SX, yH]);
+      var s = link('loop', back, back, back, 46 * KX * .8, 50 * KX * .78 + 3, PULSE, 1) +
+        link('control', [[SX, yH], [SX, yA]], c1[0], c1[1], 62 * .78, 88 * KY * .4 + 3, PKT, 2) +
+        link('video', [[SX, yA], [SX, yE]], c2[0], c2[1], 88 * KY * .4, 38 * .8, FRAME, 3) +
+        mapLink(SX + 16, yA + 20, GX - 6, yG - 18);
+      s += device('air', SX, yA, .4) + device('hands', SX, yH, .78) + device('eyes', SX, yE, .8) + device('ground', GX, yG, .6);
+      art.setAttribute('viewBox', '0 0 ' + f(col) + ' ' + f(H));
+      art.innerHTML = s;
+    }
+
+    var lastW = -1;
+    function draw() {
+      lastW = stage.clientWidth;
+      clear();
+      if (phone.matches) drawSpine(); else drawLoop();
+      var qa = art.querySelector('[data-kit="air"] .qa');
+      if (!set) set = spinSet(qa, Q.blades);
+      else { set.qa = qa; set.els = Array.prototype.slice.call(qa.querySelectorAll('.blade')); }
+    }
+    draw();
+    if (document.fonts) document.fonts.ready.then(draw);                    // tag sizes settle once the fonts load
+    if ('ResizeObserver' in window) new ResizeObserver(function () { if (stage.clientWidth !== lastW) draw(); }).observe(stage);
+    else addEventListener('resize', draw);
+    stage.onLive = function (on) { setSpin(set, on); };
+
+    // Pointing at a device or its tag lights it and its links (CSS does the dimming). Touch: a tap toggles.
+    function focusOn(kit) { if (kit) stage.dataset.on = kit; else delete stage.dataset.on; }
+    function devOf(e) { var el = e.target.closest && e.target.closest('.kit-tag, .k-dev'); return el ? el.getAttribute('data-kit') : null; }
+    stage.addEventListener('pointerover', function (e) { if (e.pointerType === 'mouse') focusOn(devOf(e)); });
+    stage.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') focusOn(null); });
+    stage.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'mouse') return;
+      var kit = devOf(e);
+      focusOn(kit && stage.dataset.on !== kit ? kit : null);
+    });
+  })();
+
+  /* ── Flight log figures and the kit loop: their CSS loops run only while on screen ── */
+  document.querySelectorAll('.log-fig, .kit-stage').forEach(function (fig) {
+    function live(on) { fig.classList.toggle('live', on); if (fig.onLive) fig.onLive(on); }
+    if (!('IntersectionObserver' in window)) { live(true); return; }
+    new IntersectionObserver(function (en) { live(en[en.length - 1].isIntersecting); }).observe(fig);
   });
 
   /* ── Reveal on scroll ── */

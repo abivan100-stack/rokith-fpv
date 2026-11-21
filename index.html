@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
-  <link rel="stylesheet" href="styles.css?v=20261121i">
+  <link rel="stylesheet" href="styles.css?v=20261121j">
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -131,39 +131,43 @@
         <ol class="spec-sheet" id="spec-sheet" aria-label="Aircraft specifications"></ol>
       </div>
 
-      <!-- Part 3: the kit, as a signal chain: hands on the radio, the aircraft, eyes in the goggles, and back. -->
+      <!-- Part 3: the kit, drawn as the loop it is: hands on the radio, the aircraft, eyes in the goggles, and back.
+           The drawing (built in script.js) is decorative; the list below it is the content, in signal order. -->
       <div class="kit reveal">
         <div class="kit-head">
           <p class="mono-label">Pre-flight · The kit</p>
           <h3>Signal chain</h3>
           <p>How the kit connects, from the pilot's hands to the aircraft and back to his eyes.</p>
         </div>
-        <ol class="chain">
-          <li class="node n-hands">
-            <p class="node-step">01 Hands</p>
-            <h4>Radios <span aria-hidden="true">×4</span></h4>
-            <ul><li>RadioMaster Zorro</li><li>RadioMaster TX12</li><li>RadioMaster TX15</li><li>Jumper Elf</li></ul>
-          </li>
-          <li class="link l-control"><span class="link-name">Control link</span> <span class="link-sub">ExpressLRS</span></li>
-          <li class="node n-air">
-            <p class="node-step"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/><circle cx="5.5" cy="5.5" r="3"/><circle cx="18.5" cy="5.5" r="3"/><circle cx="5.5" cy="18.5" r="3"/><circle cx="18.5" cy="18.5" r="3"/></svg>02 Aircraft</p>
-            <h4>Flight firmware <span aria-hidden="true">×4</span></h4>
-            <ul><li>Betaflight</li><li>INAV</li><li>ArduPilot</li><li>PX4</li></ul>
-          </li>
-          <li class="link l-video"><span class="link-name">Video link</span> <span class="link-sub">The live view</span></li>
-          <li class="node n-eyes">
-            <p class="node-step">03 Eyes</p>
-            <h4>Goggles <span aria-hidden="true">×2</span></h4>
-            <ul><li>Walksnail Avatar V1 (digital)</li><li>Skyzone Cobra X V2</li></ul>
-          </li>
-          <li class="link l-map"><span class="link-name">Mapping missions</span> <span class="link-sub">Aircraft ↔ ground</span></li>
-          <li class="node n-ground">
-            <p class="node-step">04 Ground</p>
-            <h4>Ground control</h4>
-            <ul><li>Mission Planner</li></ul>
-          </li>
-          <li class="link l-loop"><span class="link-name">Back to 01</span> <span class="link-sub">The pilot sees, then steers</span></li>
-        </ol>
+        <div class="kit-stage" id="kit-stage">
+          <svg class="kit-art" id="kit-art" aria-hidden="true" focusable="false"></svg>
+          <ol class="kit-loop">
+            <li class="kit-tag" data-kit="hands">
+              <p class="kit-step"><span class="kit-no">01</span>Hands</p>
+              <h4>Radios <span class="kit-n" aria-hidden="true">×4</span></h4>
+              <ul><li>RadioMaster Zorro</li><li>RadioMaster TX12</li><li>RadioMaster TX15</li><li>Jumper Elf</li></ul>
+            </li>
+            <li class="kit-link" data-kit="control"><span class="kit-link-name">Control link</span> <span class="kit-link-sub">ExpressLRS</span></li>
+            <li class="kit-tag" data-kit="air">
+              <p class="kit-step"><span class="kit-no">02</span>Aircraft</p>
+              <h4>Flight firmware <span class="kit-n" aria-hidden="true">×4</span></h4>
+              <ul class="kit-cols"><li>Betaflight</li><li>INAV</li><li>ArduPilot</li><li>PX4</li></ul>
+            </li>
+            <li class="kit-link" data-kit="video"><span class="kit-link-name">Video link</span> <span class="kit-link-sub">The live view</span></li>
+            <li class="kit-tag" data-kit="eyes">
+              <p class="kit-step"><span class="kit-no">03</span>Eyes</p>
+              <h4>Goggles <span class="kit-n" aria-hidden="true">×2</span></h4>
+              <ul><li>Walksnail Avatar V1 (digital)</li><li>Skyzone Cobra X V2</li></ul>
+            </li>
+            <li class="kit-link" data-kit="loop"><span class="kit-link-name">Back to 01</span> <span class="kit-link-sub">The pilot sees, then steers</span></li>
+            <li class="kit-link" data-kit="map"><span class="kit-link-name">Mapping missions</span> <span class="kit-link-sub">Aircraft ↔ ground</span></li>
+            <li class="kit-tag" data-kit="ground">
+              <p class="kit-step"><span class="kit-no">04</span>Ground</p>
+              <h4>Ground control</h4>
+              <ul><li>Mission Planner</li></ul>
+            </li>
+          </ol>
+        </div>
       </div>
     </section>
 
@@ -676,6 +680,6 @@
     <p>Chennai, India</p>
   </footer>
 
-  <script src="script.js?v=20261121i"></script>
+  <script src="script.js?v=20261121j"></script>
 </body>
 </html>

@@ -302,70 +302,130 @@ a { color: inherit; }
 }
 @media (max-width: 479px) { .spec-sheet { --cols: 1; } }
 
-/* 3. Signal chain: the kit grouped by what it does, joined by the links between the groups.
-   Phone: a vertical chain on a left rail, ground control branching off the aircraft.
-   >= 1000px: left to right, ground control under the aircraft, a return loop underneath. */
+/* 3. Signal chain: the kit drawn as the loop it is. Radio, aircraft and goggles stand on a track on the ground plane:
+   control link up to the aircraft, video link on to the goggles, and back to the radio (the pilot sees, then steers).
+   The ground station branches off the aircraft on a two-way mapping link. The drawing is built in script.js
+   (decorative); the tags and link names are the real content.
+   >= 1100px: the loop, tags beside their devices. 760-1099px: the loop, tags in a 2x2 grid below.
+   Phone: a vertical spine down the left, each tag beside its device. Without JS: a plain list. */
 .kit { margin-top: clamp(64px, 9vw, 120px); padding-top: clamp(20px, 2.4vw, 28px); border-top: 1px solid var(--ink); }
 .kit-head .mono-label { color: var(--accent-ink); }
 .kit-head h3 { margin: 10px 0 6px; font: 700 clamp(26px, 3vw, 36px)/1.1 var(--display); font-stretch: 108%; letter-spacing: -.01em; }
 .kit-head > p:last-child { color: var(--muted); }
 
-.chain { --rail: 20px; display: grid; margin-top: clamp(28px, 4vw, 44px); }
-.node { position: relative; z-index: 1; min-width: 0; padding: 20px 22px; background: var(--surface); border: 1px solid var(--line); }
-.n-air { border-color: var(--ink); }
-.node-step { display: flex; align-items: center; gap: 8px; font: 500 12px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--accent-ink); }
-.node-step svg { flex: none; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
-.node h4 { margin: 8px 0 10px; padding-bottom: 10px; border-bottom: 1px solid var(--line); font: 700 20px/1.25 var(--display); font-stretch: 106%; }
-.node h4 span { font: 500 13px var(--mono); letter-spacing: .04em; color: var(--muted); }
-.node ul li { padding: 3px 0; font-size: 16px; font-weight: 600; line-height: 1.4; }
+.kit-stage { position: relative; margin-top: clamp(24px, 3vw, 36px); }
+.kit-art { display: none; }
+.kit-loop { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px 32px; }
 
-/* Links: real text; the lines and arrowheads are drawn by ::before / ::after. */
-.link { position: relative; display: flex; flex-direction: column; justify-content: center; min-height: 72px; padding: 14px 0 14px calc(var(--rail) + 24px); }
-.link-name { font: 500 11px/1.5 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-.link-sub { font-size: 15px; font-weight: 600; line-height: 1.35; }
-.link::before { content: ""; position: absolute; left: var(--rail); top: 0; bottom: 0; width: 1px; background: var(--ink); }
-.l-control::after, .l-video::after {
-  content: ""; position: absolute; left: calc(var(--rail) - 4px); bottom: 0; width: 9px; height: 9px;
-  background: var(--ink); clip-path: polygon(0 0, 100% 0, 50% 100%);
+/* spec tags and link names */
+.kit-step { display: flex; align-items: center; gap: 8px; font: 500 11px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.kit-no {
+  display: inline-grid; place-items: center; flex: none; width: 24px; height: 24px; border: 1px solid var(--accent); border-radius: 50%;
+  background: var(--bg); font: 500 10.5px/1 var(--mono); letter-spacing: 0; color: var(--accent-ink);
 }
-.l-map { padding-left: calc(var(--rail) + 48px); background: linear-gradient(var(--ink), var(--ink)) var(--rail) 0 / 1px 100% no-repeat; }
-.l-map::before { left: calc(var(--rail) + 24px); background: none; border-left: 1px dashed var(--muted); }
-.l-loop { min-height: 0; padding-top: 18px; padding-bottom: 0; }
-.l-loop::before { content: "\21BA" / ""; top: 14px; bottom: auto; left: calc(var(--rail) - 9px); width: auto; background: none; font: 500 20px/1 var(--mono); color: var(--accent); }
+.kit-tag h4 { margin: 6px 0 8px; padding-bottom: 8px; border-bottom: 1px solid var(--ink); font: 700 19px/1.2 var(--display); font-stretch: 106%; white-space: nowrap; }
+.kit-n { font: 500 13px var(--mono); letter-spacing: .04em; color: var(--muted); }
+.kit-tag ul li { padding: 2px 0; font-size: 15px; font-weight: 600; line-height: 1.4; }
+.kit-cols { display: grid; grid-template-columns: repeat(2, max-content); column-gap: 24px; }
+.kit-link { display: flex; flex-direction: column; }
+.kit-link-name { font: 500 11px/1.5 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.kit-link-sub { font-size: 15px; font-weight: 600; line-height: 1.35; white-space: nowrap; }
 
-/* Tablet: two columns of items keep the stacked cards short. */
-@media (min-width: 560px) and (max-width: 999px) { .node ul { columns: 2; column-gap: 24px; } }
+/* The drawing: same strokes and fills as the hangar (.qa), plus the track and the signal on it */
+.js .kit-art { display: block; overflow: visible; }
+.kit-art .k-band { fill: color-mix(in srgb, var(--muted) 8%, var(--bg)); stroke: none; }
+.kit-art .k-edge { fill: none; stroke: var(--ink); stroke-width: 1.3; stroke-linejoin: round; }
+.kit-art .k-ret { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 4 5; }
+.kit-art .k-map { fill: none; stroke: var(--ink); stroke-width: 1.3; stroke-dasharray: 3 5; }
+.kit-art .k-station { fill: var(--surface); stroke: var(--muted); stroke-width: 1; }
+.kit-art .k-plate { fill: color-mix(in srgb, var(--ink) 7%, var(--surface)); stroke: var(--ink); stroke-width: .9; }
+.kit-art .k-nose { fill: var(--bg); stroke: var(--ink); stroke-width: 1.3; stroke-linejoin: round; }
+.kit-art .k-arrow { fill: var(--ink); }
+.kit-art .k-arrow.ret { fill: var(--muted); }
+.kit-art .k-lcd { fill: none; stroke: color-mix(in srgb, var(--surface) 70%, transparent); stroke-width: 1.4; stroke-linecap: round; }
+.kit-art .k-callout circle { fill: var(--bg); stroke: var(--accent); stroke-width: 1; }
+.kit-art .k-callout text { fill: var(--accent-ink); font: 500 10.5px var(--mono); text-anchor: middle; }
+.kit-art .k-screen { fill: var(--ink); stroke: var(--ink); stroke-width: 1.3; stroke-linejoin: round; }
+.kit-art .k-grid { fill: none; stroke: color-mix(in srgb, var(--surface) 30%, transparent); stroke-width: .8; }
+.kit-art .k-route { fill: none; stroke: var(--accent); stroke-width: 1; stroke-linejoin: round; stroke-linecap: round; }
+.kit-art .k-wp { fill: var(--surface); stroke: var(--accent); stroke-width: 1; }
+.kit-art .k-home { fill: var(--accent); }
+.kit-art .k-foam .top, .kit-art .k-foam .side { fill: color-mix(in srgb, var(--ink) 78%, var(--surface)); }
+.kit-art .k-keys { fill: color-mix(in srgb, var(--ink) 9%, var(--surface)); stroke: var(--ink); stroke-width: .8; }
+.kit-art .k-stick { fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linecap: round; }
+.kit-art .k-stick.k-thin { stroke-width: 1.6; }
+.kit-art .qa .disc { display: none; }   /* at this size the blades alone show the props turning */
+.kit-art .k-led { fill: var(--accent); }
+.kit-art .k-hit { fill: transparent; stroke: none; pointer-events: all; }
+.kit-art .k-pkt { fill: var(--accent); }
+.kit-art .k-frame { fill: var(--surface); stroke: var(--accent); stroke-width: 1.3; }
+.kit-art .k-pulse { fill: var(--muted); }
 
-/* Phone order: ground control branches off the aircraft, beside the main rail. */
-.n-hands { order: 1; } .l-control { order: 2; } .n-air { order: 3; } .l-map { order: 4; }
-.n-ground { order: 5; margin-left: calc(var(--rail) + 12px); }
-.n-ground::before { content: ""; position: absolute; left: -13px; top: -1px; bottom: -1px; width: 1px; background: var(--ink); }
-.l-video { order: 6; } .n-eyes { order: 7; } .l-loop { order: 8; }
+/* Motion: every loop shares --T. Each moving mark is placed in the loop by its own --d (a negative delay),
+   so the frame at 0 s (reduced motion, and off screen) already has every packet part-way along its link.
+   Only offset-distance, transform and opacity are animated. */
+.kit-art { --T: 6s; }
+.kit-art .k-run { offset-rotate: auto; animation: kit-run var(--T) linear infinite; animation-delay: var(--d, 0s); }
+.kit-art .k-ret-run { offset-rotate: auto; animation: kit-ret var(--T) ease-in-out infinite; animation-delay: var(--d, 0s); }
+.kit-art .k-flow { animation: kit-flow calc(var(--T) / 6) linear infinite; }
+.js .kit-stage:not(.live) .kit-art * { animation-play-state: paused; }
+.kit-art.k-still .k-run, .kit-art.k-still .k-ret-run { animation: none; }
+@keyframes kit-run { 0% { offset-distance: 0%; opacity: 0; } 8%, 90% { opacity: 1; } 100% { offset-distance: 100%; opacity: 0; } }
+@keyframes kit-ret { 0% { offset-distance: 0%; opacity: 0; } 15%, 80% { opacity: .6; } 100% { offset-distance: 100%; opacity: 0; } }
+@keyframes kit-flow { to { transform: translate(var(--fx), var(--fy)); } }
 
-@media (min-width: 1000px) {
-  .chain { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr); grid-template-rows: auto 64px auto 28px; }
-  .n-hands { grid-area: 1 / 1; } .l-control { grid-area: 1 / 2; } .n-air { grid-area: 1 / 3; }
-  .l-video { grid-area: 1 / 4; } .n-eyes { grid-area: 1 / 5; }
-  .l-map { grid-area: 2 / 3; } .n-ground { grid-area: 3 / 3; margin-left: 0; }
-  .n-ground::before { content: none; }
-  .l-loop { grid-area: 2 / 1 / 5 / 6; }
+/* Pointing at a device or its tag lights that device, its tag and its links; the rest steps back */
+.kit-stage [data-kit] { transition: opacity .25s ease; }
+.kit-stage[data-on="hands"]  [data-kit]:not([data-kit~="hands"], [data-kit~="control"], [data-kit~="loop"]),
+.kit-stage[data-on="air"]    [data-kit]:not([data-kit~="air"], [data-kit~="control"], [data-kit~="video"], [data-kit~="map"]),
+.kit-stage[data-on="eyes"]   [data-kit]:not([data-kit~="eyes"], [data-kit~="video"], [data-kit~="loop"]),
+.kit-stage[data-on="ground"] [data-kit]:not([data-kit~="ground"], [data-kit~="map"]) { opacity: .25; }
+.kit-tag h4, .kit-no { transition: border-color .25s ease, background-color .25s ease, color .25s ease; }
+.kit-stage[data-on="hands"] [data-kit="hands"] h4, .kit-stage[data-on="air"] [data-kit="air"] h4,
+.kit-stage[data-on="eyes"] [data-kit="eyes"] h4, .kit-stage[data-on="ground"] [data-kit="ground"] h4 { border-color: var(--accent); }
+.kit-stage[data-on="hands"] [data-kit="hands"] .kit-no, .kit-stage[data-on="air"] [data-kit="air"] .kit-no,
+.kit-stage[data-on="eyes"] [data-kit="eyes"] .kit-no, .kit-stage[data-on="ground"] [data-kit="ground"] .kit-no { background: var(--accent-ink); border-color: var(--accent-ink); color: var(--on-accent); }
 
-  /* horizontal links: label above an arrow that ends on the next node */
-  .l-control, .l-video { align-self: start; justify-content: flex-end; min-height: 0; height: 81px; padding: 0 clamp(14px, 1.6vw, 22px) 12px; text-align: center; white-space: nowrap; }
-  .l-control::before, .l-video::before { left: 0; right: 2px; top: auto; bottom: 0; width: auto; height: 1px; }
-  .l-control::after, .l-video::after { left: auto; right: 0; bottom: -4px; clip-path: polygon(0 0, 100% 50%, 0 100%); }
+/* >= 760px: the loop. script.js lays the drawing out in CSS pixels and places every tag and link name on it,
+   inside the plate's grid area. */
+@media (min-width: 760px) {
+  .js .kit-stage { display: grid; grid-template-areas: "plate"; }
+  .js .kit-art { grid-area: plate; width: 100%; }
+  .js .kit-loop { display: contents; }
+  .js .kit-loop > li { grid-area: plate; position: absolute; z-index: 1; width: max-content; }
+}
+@media (min-width: 1100px) {
+  .js .kit-tag[data-kit="air"] { text-align: center; }
+  .js .kit-tag[data-kit="air"] .kit-step { justify-content: center; }
+  .js .kit-cols { display: flex; justify-content: center; gap: 0; }
+  .js .kit-cols li + li::before { content: "·"; padding: 0 10px; color: var(--muted); font-weight: 400; }
+}
+@media (min-width: 760px) and (max-width: 1099px) {
+  .js .kit-stage { grid-template-areas: "plate plate" "a b" "c d"; grid-template-columns: 1fr 1fr; gap: 28px 40px; }
+  .js .kit-loop > .kit-tag { position: static; width: auto; padding-top: 18px; border-top: 1px solid var(--line); }
+  .js .kit-tag[data-kit="hands"] { grid-area: a; } .js .kit-tag[data-kit="air"] { grid-area: b; }
+  .js .kit-tag[data-kit="eyes"] { grid-area: c; } .js .kit-tag[data-kit="ground"] { grid-area: d; }
+}
 
-  /* ground control hangs off the aircraft on a dashed line: only for mapping missions */
-  .l-map { min-height: 0; padding: 0 0 0 calc(50% + 14px); background: none; white-space: nowrap; }
-  .l-map::before { left: 50%; }
+/* Phone: a vertical spine. Tags and links stack in signal order beside a drawn column; script.js measures the rows
+   and draws each device level with its tag. */
+@media (max-width: 759px) {
+  .js .kit-stage { --col: 140px; }
+  .js .kit-art { position: absolute; left: 0; top: 0; width: var(--col); height: 100%; }
+  .js .kit-loop { display: flex; flex-direction: column; gap: 0; padding-left: var(--col); }
+  .js .kit-loop > li { padding: 12px 0; }
+  .js .kit-tag { min-height: 120px; display: flex; flex-direction: column; justify-content: center; }
+  .js .kit-tag[data-kit="hands"] { order: 1; } .js .kit-link[data-kit="control"] { order: 2; }
+  .js .kit-tag[data-kit="air"] { order: 3; } .js .kit-link[data-kit="map"] { order: 4; }
+  .js .kit-tag[data-kit="ground"] { order: 5; min-height: 96px; } .js .kit-link[data-kit="video"] { order: 6; }
+  .js .kit-tag[data-kit="eyes"] { order: 7; } .js .kit-link[data-kit="loop"] { order: 8; }
+  .js .kit-link { padding: 6px 0; }
+  .kit-tag h4 { white-space: normal; }
+}
 
-  /* the return loop runs under the chain, from the goggles back up to the radios */
-  .l-loop { z-index: 0; justify-content: flex-start; padding: 22px 0 0 56px; }
-  .l-loop::before { content: ""; inset: 0 32px 13px; width: auto; border: 1px solid var(--muted); border-top: 0; }
-  .l-loop::after {
-    content: ""; position: absolute; left: 28px; top: 0; width: 9px; height: 9px;
-    background: var(--accent); clip-path: polygon(50% 0, 100% 100%, 0 100%);
-  }
+@media (prefers-reduced-motion: reduce) {
+  .kit-art * { animation-play-state: paused !important; }
+  .kit-stage [data-kit], .kit-tag h4, .kit-no { transition: none; }
 }
 
 /* ── Projects ── */
