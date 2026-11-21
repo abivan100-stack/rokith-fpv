@@ -6,7 +6,7 @@
   <title>Rokith Kumaar | FPV Pilot &amp; Robotics Builder</title>
   <meta name="description" content="Rokith Kumaar is a 16-year-old FPV drone pilot and robotics builder from Chennai, India. He designs, builds and tunes every aircraft he flies, with 14 podium finishes in drone racing and robotics.">
   <meta property="og:title" content="Rokith Kumaar | FPV Pilot &amp; Robotics Builder">
-  <meta property="og:description" content="Builds what he flies. Flies what he builds. 14 podium finishes in drone racing and robotics.">
+  <meta property="og:description" content="FPV pilot and robotics builder from Chennai, India. He builds and tunes every aircraft he flies: 14 podium finishes in drone racing and robotics.">
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#f3f0e8">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -52,24 +52,28 @@
     <!-- ───────────── HERO ───────────── -->
     <section class="hero" id="hero" data-wp="">
       <canvas id="sky" aria-hidden="true"></canvas>
-      <div class="hero-inner">
-        <p class="eyebrow">Grade 12 student · FPV pilot · Robotics builder · Chennai, India</p>
-        <h1>Rokith<br>Kumaar</h1>
-        <p class="tagline">Builds what he flies.<br><em>Flies what he builds.</em></p>
-        <p class="lede">A 16-year-old student pilot and builder who designs, builds and tunes every aircraft he flies, from 3-inch race quads to a 10-inch agricultural UAV.</p>
-        <div class="cta">
-          <a class="btn primary" href="#results">See the results</a>
-          <a class="btn" href="#contact">Get in touch</a>
+      <div class="hero-main">
+        <div class="hero-copy">
+          <p class="sec-no">WP 00 / Takeoff</p>
+          <h1>Rokith<br>Kumaar</h1>
+          <p class="hero-lede">An FPV pilot and robotics builder from Chennai, aged <span id="hero-age">16</span> and in Grade&nbsp;12. He builds and tunes every aircraft he flies, and learned to fly on real hardware, never a simulator.</p>
+          <div class="cta">
+            <a class="btn primary" href="assets/Rokith-Kumaar-CV.pdf" download>Download CV ↓</a>
+            <a class="btn" href="mailto:rokithkumaar742@gmail.com?subject=Hello%20Rokith&amp;body=Hi%20Rokith%2C%0D%0A%0D%0A%0D%0ABest%2C%0D%0A" data-compose data-code="Direct" data-title="Email Rokith">Email Rokith →</a>
+          </div>
         </div>
-        <dl class="stats">
-          <div><dt>Podium finishes</dt><dd>14</dd></div>
-          <div><dt>First-place wins</dt><dd>7</dd></div>
-          <div><dt>Prize winnings</dt><dd>₹7.13L<small>+ US$1,500</small></dd></div>
-          <div><dt>Aircraft built &amp; tuned</dt><dd>5</dd></div>
-        </dl>
+        <!-- The drone's airspace: script.js flies the idle loop (and parks the reduced-motion frame) inside this box,
+             so the aircraft never crosses the text. The mode readout switches to Follow while a pointer leads it. -->
+        <div class="hero-air" id="hero-air" aria-hidden="true">
+          <p class="air-mode">Mode <span id="hero-mode">Loiter</span></p>
+          <p class="air-coord">13.0827° N · 80.2707° E<br><span>Takeoff</span></p>
+        </div>
       </div>
-      <p class="hero-coord">13.0827° N · 80.2707° E<br>Chennai, IN</p>
-      <p class="hero-hint" id="hero-hint">Move your cursor. The quad follows.</p>
+      <ol class="hero-log" aria-label="Highlights">
+        <li><a href="#results"><span class="hl-meta"><span>Oct 2026</span><span class="hl-wp">WP 04 Results</span></span><span class="hl-title">Vadiva Tech Fest</span><span class="hl-desc">Gold in the drone race, Robosoccer and RoboRetrieve</span></a></li>
+        <li><a href="#agrifly"><span class="hl-meta"><span>Jan 2026</span><span class="hl-wp">WP 03 Projects</span></span><span class="hl-title">Agrifly, Robowunder, Malaysia</span><span class="hl-desc">Silver, a US$1,500 prize and a US$5,000 investment</span></a></li>
+        <li><a href="#projects"><span class="hl-meta"><span>May 2024</span><span class="hl-wp">WP 03 Projects</span></span><span class="hl-title">BluJ Aerospace internship</span><span class="hl-desc">A CAN-bus integration model for a passenger VTOL</span></a></li>
+      </ol>
     </section>
 
     <!-- ───────────── ABOUT ───────────── -->
