@@ -689,7 +689,7 @@ html:not(.js) .mission-art svg { display: none; }
 .stage-verb { font: 700 22px/1.2 var(--display); font-stretch: 108%; letter-spacing: -.01em; }
 .stage-skills li { position: relative; padding: 5px 0 5px 18px; font-size: 15px; line-height: 1.45; }
 .stage-skills li::before { content: ""; position: absolute; left: 0; top: .9em; width: 6px; height: 6px; background: var(--muted); opacity: .45; transition: background .2s, opacity .2s; }
-.stage:is(:hover, :focus-within) .stage-skills li::before, .lead-band:is(:hover, :focus-within) .stage-skills li::before { background: var(--accent); opacity: 1; }
+.stage:is(:hover, :focus-within) .stage-skills li::before { background: var(--accent); opacity: 1; }
 .stage .stage-skills { padding-bottom: 24px; }
 .proof { margin-top: auto; padding-top: 16px; border-top: 1px dotted var(--muted); }
 .proof .mono-label { font-size: 11px; margin-bottom: 8px; }
@@ -697,16 +697,68 @@ html:not(.js) .mission-art svg { display: none; }
 .proof a::after { content: "\00a0\2192" / ""; color: var(--accent-ink); }  /* no-break space keeps the arrow on the last word */
 .proof a:hover { color: var(--accent-ink); text-decoration-color: currentColor; }
 
-/* lead band: runs through every stage */
-.lead-band { margin-top: 24px; padding: 20px 24px; border: 1px dashed var(--muted); }
-.lead-band h3 { margin-bottom: 12px; }
-.lead-band .stage-skills { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); column-gap: 24px; align-self: start; align-content: start; }
-.lead-band .proof { margin-top: 12px; padding-top: 14px; }
-@media (min-width: 1100px) {
-  /* stacked like the stage cards: skills 3 across, then "Used in" with its links flowing left to right */
-  .lead-band .stage-skills { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .lead-band .proof { display: flex; flex-wrap: wrap; align-items: flex-start; column-gap: 40px; }
-  .lead-band .proof .mono-label { flex-basis: 100%; }
+/* lead band "flight lead": a span bracket across all four stages, the lead skills flown as a V formation, two sortie cards */
+.lead-band { --lb-pad: 28px; margin-top: 32px; padding: 0 var(--lb-pad) var(--lb-pad); border: 1px dashed var(--muted); border-top: 0; }
+/* bracket: pulled out over the side borders so its columns are the pipeline's columns exactly */
+.lb-span { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); height: 44px; margin: 0 calc(-1px - var(--lb-pad)); border-top: 1px solid var(--ink); font: 500 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.lb-span::before, .lb-span::after { content: ""; position: absolute; top: -7px; width: 1px; height: 18px; background: var(--ink); }
+.lb-span::before { left: 0; } .lb-span::after { right: 0; }
+.lb-span span { position: relative; display: flex; justify-content: center; padding-top: 14px; font-variant-numeric: tabular-nums;
+  background: linear-gradient(var(--ink), var(--ink)) 50% 0 / 1px 6px no-repeat; }   /* centre tick under each stage */
+.lb-span span + span::before { content: ""; position: absolute; left: 0; top: -4px; width: 1px; height: 8px; background: var(--ink); }   /* stage dividers */
+.lb-span b { position: absolute; left: 50%; top: -6px; transform: translateX(-50%); padding: 0 12px; background: var(--bg); line-height: 11px; font-weight: 500; color: var(--ink); white-space: nowrap; }
+
+.lb-body { display: grid; gap: 28px; padding-top: 4px; }
+.lb-flight h3 { margin-bottom: 4px; }
+
+/* formation: glyph centres sit on a grid of --dx by --dy steps from the lead (x, y set per wingman) */
+.lb-formation { --dx: clamp(64px, 6vw, 84px); --dy: 84px; --top: 64px; --g: 26px; position: relative; height: calc(var(--top) + 2 * var(--dy) + 56px); }
+.lb-lines { position: absolute; left: calc(50% - 2 * var(--dx)); top: var(--top); width: calc(4 * var(--dx)); height: calc(2 * var(--dy)); overflow: visible;
+  fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 5; opacity: .55; transition: opacity .3s, stroke .3s; }
+.lb-lines path { vector-effect: non-scaling-stroke; }   /* the 4 x 2 viewBox stretches to the step sizes; strokes and dashes stay 1 px */
+.lb-defs { position: absolute; }
+.lb-skills li { position: absolute; left: calc(50% + var(--x, 0) * var(--dx)); top: calc(var(--top) + var(--y, 0) * var(--dy)); width: 0; height: 0;
+  transition: transform .6s cubic-bezier(.3, .7, .2, 1) calc(var(--y, 0) * 90ms); }
+.lb-l1 { --x: -1; --y: 1; } .lb-r1 { --x: 1; --y: 1; } .lb-l2 { --x: -2; --y: 2; } .lb-r2 { --x: 2; --y: 2; } .lb-slot { --y: 2; }
+.lb-skills svg { position: absolute; left: calc(var(--g) / -2); top: calc(var(--g) / -2); width: var(--g); height: var(--g); padding: 1px; border-radius: 50%; background: var(--bg);
+  fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; transition: stroke .3s; }
+.lb-skills span { position: absolute; top: 0; width: max-content; max-width: 10.5em; font-size: 15px; line-height: 1.35; transform: translateY(-50%); }
+.lb-l1 span, .lb-l2 span { right: calc(var(--g) / 2 + 12px); text-align: right; }
+.lb-r1 span, .lb-r2 span { left: calc(var(--g) / 2 + 12px); }
+.lb-slot span { top: calc(var(--g) / 2 + 10px); left: 0; transform: translateX(-50%); text-align: center; }
+.lb-lead { --g: 40px; }
+.lb-lead svg { stroke: var(--accent); stroke-width: 1.3; }
+.lb-lead circle { stroke-dasharray: 4.2 1.4; transform-box: fill-box; transform-origin: center; }   /* segmented so a spin reads */
+.lb-lead span { top: auto; bottom: calc(var(--g) / 2 + 10px); left: 0; transform: translateX(-50%); text-align: center; font-size: 17px; font-weight: 700; }
+.lead-band:is(:hover, :focus-within) .lb-skills li { transform: translateY(-6px); }
+.lead-band:is(:hover, :focus-within) .lb-lines { stroke: var(--accent); opacity: .8; }
+.lead-band:is(:hover, :focus-within) .lb-lead circle { animation: lb-prop .5s linear infinite; }
+@keyframes lb-prop { to { transform: rotate(360deg); } }
+
+/* sorties: the two "Used in" links as cards; the link stretches over the whole card */
+.lb-sorties { display: grid; gap: 12px; align-content: center; }
+.lb-sorties .mono-label { font-size: 11px; }
+.lb-sortie { position: relative; padding: 16px 18px 18px; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--ink); transition: transform .2s, border-color .2s; }
+.lb-sortie p { margin-bottom: 8px; font: 500 11px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); transition: color .2s; }
+.lb-sortie a { display: block; font-size: 16px; line-height: 1.45; font-weight: 600; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 4px; text-decoration-thickness: 1px; transition: color .2s, text-decoration-color .2s; }
+.lb-sortie a::before { content: ""; position: absolute; inset: 0; }
+.lb-sortie a::after { content: "\00a0\2192" / ""; color: var(--accent-ink); }  /* no-break space keeps the arrow on the last word */
+.lb-sortie a:focus-visible { outline: none; }
+.lb-sortie:is(:hover, :has(a:focus-visible)) { border-color: var(--ink); border-left-color: var(--accent); transform: translateY(-2px); }
+.lb-sortie:has(a:focus-visible) { outline: 2px solid var(--accent); outline-offset: 3px; }
+.lb-sortie:is(:hover, :has(a:focus-visible)) p, .lb-sortie:is(:hover, :has(a:focus-visible)) a { color: var(--accent-ink); }
+.lb-sortie:is(:hover, :has(a:focus-visible)) a { text-decoration-color: currentColor; }
+
+@media (min-width: 760px) and (max-width: 1279px) {
+  .lb-sorties { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; }
+  .lb-sorties .mono-label { grid-column: 1 / -1; }
+}
+@media (min-width: 1280px) {
+  .lb-body { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 40px; }
+}
+/* below 1100 the stages wrap, so the bracket keeps only its ends and its label */
+@media (max-width: 1099px) {
+  .lb-span span { visibility: hidden; }
 }
 
 @media (max-width: 1099px) {
@@ -728,7 +780,21 @@ html:not(.js) .mission-art svg { display: none; }
   .stage:nth-child(n+2) { border-top: 1px solid var(--line); }
   .stage::before { content: ""; position: absolute; left: -32px; top: 32px; width: 7px; height: 7px; border: 1px solid var(--muted); border-radius: 50%; background: var(--bg); transition: background .3s, border-color .3s; }
   .stage.in::before, .stage:is(:hover, :focus-within)::before { background: var(--accent); border-color: var(--accent); }
-  .lead-band { padding: 20px; }
+  /* lead band: bracket becomes a label row, the formation a vertical trail behind the lead */
+  .lead-band { --lb-pad: 20px; }
+  .lb-span { display: flex; height: auto; padding: 14px var(--lb-pad) 12px; }
+  .lb-span span { display: none; }
+  .lb-span b { position: static; transform: none; padding: 0; }
+  .lb-formation { height: auto; margin-top: 16px; }
+  .lb-lines { display: none; }
+  .lb-skills { position: relative; display: grid; gap: 14px; }
+  .lb-skills::before { content: ""; position: absolute; left: 13.5px; top: 20px; bottom: 12px; border-left: 1px dashed var(--muted); opacity: .7; }
+  .lb-skills li { position: relative; left: auto; top: auto; width: auto; height: auto; display: flex; align-items: center; gap: 14px; transition: none; }
+  .lb-skills li:nth-child(n+2) { padding-left: 2px; }
+  .lb-skills svg { position: relative; left: auto; top: auto; flex: none; }
+  .lb-skills span, .lb-lead span, .lb-slot span { position: static; max-width: none; transform: none; text-align: left; }
+  .lb-lead { --g: 28px; }
+  .lead-band:is(:hover, :focus-within) .lb-skills li { transform: none; }
 }
 
 /* ── Contact ── */
@@ -1012,6 +1078,9 @@ html:not(.js) .mission-art svg { display: none; }
   .project.feature:is(:hover, :focus-within) .mission-art .drone { transform: none; }
   .pipe-track::before { transform: none; transition: none; }
   .pt-node i, .stage::before, .stage-skills li::before, .proof a { transition: none; }
+  .lb-skills li, .lb-skills svg, .lb-lines, .lb-sortie, .lb-sortie * { transition: none; }
+  .lead-band:is(:hover, :focus-within) .lb-skills li, .lb-sortie:is(:hover, :has(a:focus-visible)) { transform: none; }
+  .lead-band:is(:hover, :focus-within) .lb-lead circle { animation: none; }
   .pt-node i { background: var(--accent); border-color: var(--accent); }
   .stage::before { background: var(--accent); border-color: var(--accent); }
   .btn, .copy, .brief, .contact .arr { transition: none; }
