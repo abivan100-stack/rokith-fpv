@@ -731,8 +731,8 @@
     });
   })();
 
-  /* ── Flight log figures and the kit loop: their CSS loops run only while on screen ── */
-  document.querySelectorAll('.log-fig, .kit-stage').forEach(function (fig) {
+  /* ── Flight log figures, the kit loop and Agrifly's data flow: their CSS loops run only while on screen ── */
+  document.querySelectorAll('.log-fig, .kit-stage, .flow').forEach(function (fig) {
     function live(on) { fig.classList.toggle('live', on); if (fig.onLive) fig.onLive(on); }
     if (!('IntersectionObserver' in window)) { live(true); return; }
     new IntersectionObserver(function (en) { live(en[en.length - 1].isIntersecting); }).observe(fig);
