@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,500..600&display=swap">
-  <link rel="stylesheet" href="styles.css?v=20261121n">
+  <link rel="stylesheet" href="styles.css?v=20261121o">
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -205,41 +205,44 @@
           </dl>
           <a class="btn primary mission-cta" href="https://agrifly-live.vercel.app/" target="_blank" rel="noopener">Open the live dashboard ↗<span class="sr-only"> (opens in new tab)</span></a>
         </div>
+        <!-- How it works: the system as the data flow it is. Sensor chips feed one bus into the ESP32, then NDVI analysis,
+             cloud telemetry and the live dashboard. The lists are the content, in flow order; leaders, arrows, drawings
+             and data dots are decoration (aria-hidden). Layout follows the panel's width (container queries in styles.css). -->
         <div class="mission-system">
           <p class="mono-label">How it works</p>
-          <ul class="system-groups">
-            <li>
+          <ol class="flow">
+            <li class="fl-stage fl-sensors">
               <h4>Sensors</h4>
-              <ul>
-                <li>Multispectral imaging</li>
-                <li>MQ-135 <span>· gas</span></li>
-                <li>BME280 <span>· temp / humidity / pressure</span></li>
-                <li>BH1750 <span>· light</span></li>
-                <li>Soil-moisture sensor</li>
-                <li>NEO-6M <span>· GPS</span></li>
-                <li>MPU6050 <span>· IMU</span></li>
+              <ul class="fl-bank">
+                <li>Multispectral imaging<i class="fl-tx" aria-hidden="true" style="--t:0s"></i></li>
+                <li>MQ-135 <span><span class="sep">· </span>gas</span><i class="fl-tx" aria-hidden="true" style="--t:.5s"></i></li>
+                <li>BME280 <span><span class="sep">· </span>temp / humidity / pressure</span><i class="fl-tx" aria-hidden="true" style="--t:.25s"></i></li>
+                <li>BH1750 <span><span class="sep">· </span>light</span><i class="fl-tx" aria-hidden="true" style="--t:.75s"></i></li>
+                <li>Soil-moisture sensor<i class="fl-tx" aria-hidden="true" style="--t:.1s"></i></li>
+                <li>NEO-6M <span><span class="sep">· </span>GPS</span><i class="fl-tx" aria-hidden="true" style="--t:.6s"></i></li>
+                <li>MPU6050 <span><span class="sep">· </span>IMU</span><i class="fl-tx" aria-hidden="true" style="--t:.35s"></i></li>
               </ul>
             </li>
-            <li>
+            <li class="fl-stage fl-ctrl">
               <h4>Controller &amp; analysis</h4>
-              <ul>
-                <li>ESP32</li>
-                <li>NDVI analysis</li>
+              <ul class="fl-chain">
+                <li class="fl-node fl-board"><i class="fl-in" aria-hidden="true" style="--t:1.3s"><i></i></i><svg class="fl-art" viewBox="0 0 64 56" aria-hidden="true" focusable="false"><path d="M8 16V4h7v12h7V4h7v12h7V4h7v12h7V4h6"/><rect x="4" y="21" width="56" height="31" rx="1.5"/><circle class="hot" cx="10.5" cy="27.5" r="2"/><path class="thin" d="M16 36h32M16 43h22"/></svg><span class="fl-name">ESP32</span></li>
+                <li class="fl-node"><i class="fl-in" aria-hidden="true" style="--t:2.3s"><i></i></i><svg class="fl-art" viewBox="0 0 64 56" aria-hidden="true" focusable="false"><path class="c1" d="M17 4h15v13H17zM47 17h15v13H47zM32 43h15v13H32z"/><path class="c2" d="M32 17h15v13H32zM17 30h15v13H17z"/><path class="c3" d="M2 30h15v13H2zM47 43h15v13H47z"/><rect x="2" y="4" width="60" height="52"/><path class="thin" d="M17 4v52M32 4v52M47 4v52M2 17h60M2 30h60M2 43h60"/></svg><span class="fl-name">NDVI analysis</span></li>
               </ul>
             </li>
-            <li>
+            <li class="fl-stage fl-net">
               <h4>Connectivity</h4>
-              <ul>
-                <li>IoT cloud telemetry</li>
+              <ul class="fl-chain">
+                <li class="fl-node"><i class="fl-in" aria-hidden="true" style="--t:3.3s"><i></i></i><svg class="fl-art" viewBox="0 0 64 56" aria-hidden="true" focusable="false"><path d="M17 34a10 10 0 0 1 .6-20 14 14 0 0 1 27-3.4A11.5 11.5 0 0 1 47 34z"/><path class="hot" d="M27 54V41M23 45l4-4 4 4"/><path class="thin" d="M37 41v13M33 50l4 4 4-4"/></svg><span class="fl-name">IoT cloud telemetry</span></li>
               </ul>
             </li>
-            <li>
+            <li class="fl-stage fl-dash">
               <h4>Dashboard</h4>
-              <ul>
-                <li><a href="https://agrifly-live.vercel.app/" target="_blank" rel="noopener">Live web dashboard<span class="sr-only"> (opens in new tab)</span></a></li>
+              <ul class="fl-chain">
+                <li class="fl-node fl-end"><i class="fl-in" aria-hidden="true" style="--t:4.3s"><i></i></i><svg class="fl-art" viewBox="0 0 64 56" aria-hidden="true" focusable="false"><rect x="2" y="3" width="60" height="50" rx="1.5"/><path class="thin" d="M2 11h60M26 16v32"/><circle class="thin" cx="6.5" cy="7" r="1"/><circle class="thin" cx="10.5" cy="7" r="1"/><path class="hot" d="M31 44l7-9 6 4 7-12 7 6"/><path class="thin" d="M7 19h14M7 24h10M7 29h12M8 48v-6M12 48v-9M16 48v-4M20 48v-7"/></svg><a href="https://agrifly-live.vercel.app/" target="_blank" rel="noopener">Live web dashboard<span class="sr-only"> (opens in new tab)</span></a></li>
               </ul>
             </li>
-          </ul>
+          </ol>
         </div>
       </article>
 
@@ -686,6 +689,6 @@
     <p>Chennai, India</p>
   </footer>
 
-  <script src="script.js?v=20261121n"></script>
+  <script src="script.js?v=20261121o"></script>
 </body>
 </html>
